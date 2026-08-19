@@ -1,6 +1,7 @@
 <?php
 
 include("../database/connection.php");
+include("../db_helpers.php");
 
 function back_to_form($error, $username, $email){
     $params = [];
@@ -65,8 +66,9 @@ $sql = "INSERT INTO users(username, email, password_hash) VALUES(?, ?, ?)";
 $query = $mysql->prepare($sql);
 $query->bind_param("sss", $username, $email, $password_hash);
 
-if(!$query->execute()){
-    $duplicate_field = str_contains($query->error, "username") ? "username" : "email";
+$duplicate_message = insert_or_duplicate_error($query);
+if($duplicate_message != null){
+    $duplicate_field = str_contains($duplicate_message, "username") ? "username" : "email";
     if($duplicate_field == "username"){
         back_to_form("Username already taken.", $username, $email);
     }
