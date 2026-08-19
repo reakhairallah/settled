@@ -89,6 +89,7 @@ if($duplicate_message != null) {
 }
 
 $trip_id = $mysql->insert_id;
+$_SESSION["pending_trip_id"] = $trip_id;
 
 $data = [];
 $data["trip_id"] = $trip_id;

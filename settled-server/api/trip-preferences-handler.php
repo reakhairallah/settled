@@ -27,14 +27,7 @@ if($trip_id <= 0 || !in_array($energy_level, ["1", "2", "3"])) {
     exit;
 }
 
-$sql = "SELECT COUNT(*) AS total FROM trips WHERE id = ? AND created_by = ?";
-$query = $mysql->prepare($sql);
-$query->bind_param("ii", $trip_id, $user_id);
-$query->execute();
-$array = $query->get_result();
-$row = $array->fetch_assoc();
-
-if($row["total"] == 0) {
+if(!isset($_SESSION["pending_trip_id"]) || $_SESSION["pending_trip_id"] != $trip_id) {
     echo json_encode(["success" => false, "error" => "Trip not found."]);
     exit;
 }
@@ -58,6 +51,8 @@ if($duplicate_message != null) {
     echo json_encode(["success" => false, "error" => "You've already submitted this."]);
     exit;
 }
+
+unset($_SESSION["pending_trip_id"]);
 
 echo json_encode(["success" => true, "data" => new stdClass()]);
 
