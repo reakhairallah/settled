@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .catch((error) => {
-                tripError.textContent = error.response?.data?.error ?? 'Something went wrong. Please try again.';
+                tripError.textContent = extract_axios_error_message(error);
             });
     });
 
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .catch((error) => {
-                preferencesError.textContent = error.response?.data?.error ?? 'Something went wrong. Please try again.';
+                preferencesError.textContent = extract_axios_error_message(error);
             });
     });
 });

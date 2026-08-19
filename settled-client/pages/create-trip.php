@@ -62,6 +62,7 @@ include("../../settled-server/auth_check.php");
 </form>
 
 <script src="../scripts/axios.min.js"></script>
+<script src="../scripts/helper.js"></script>
 <script src="../scripts/create-trip.js"></script>
 </body>
 </html>
