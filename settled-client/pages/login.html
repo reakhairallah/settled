@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Log In — Settled</title>
+</head>
+<body>
+    <h1>Log in</h1>
+
+    <p id="error-message" style="color: red;"></p>
+
+    <form id="login-form" action="../../settled-server/api/login-handler.php" method="POST">
+        <label for="email">Email</label><br>
+        <input type="email" id="email" name="email" required><br>
+
+        <label for="password">Password</label><br>
+        <input type="password" id="password" name="password" required><br>
+
+        <button type="submit">Log In</button>
+    </form>
+
+    <p>Don't have an account? <a href="register.html">Register</a></p>
+
+    <script src="../scripts/login.js"></script>
+</body>
+</html>
