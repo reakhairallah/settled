@@ -2,6 +2,7 @@
 
 include("../database/connection.php");
 include("../db_helpers.php");
+session_start();
 
 function back_to_form($error, $username, $email){
     $params = [];
@@ -75,7 +76,11 @@ if($duplicate_message != null){
     back_to_form("Email already registered.", $username, $email);
 }
 
-header("Location: ../../settled-client/pages/login.html");
+$user_id = $mysql->insert_id;
+session_regenerate_id(true);
+$_SESSION["user_id"] = $user_id;
+
+header("Location: ../../settled-client/pages/dashboard.php");
 exit;
 
 ?>

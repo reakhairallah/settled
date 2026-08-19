@@ -41,7 +41,7 @@ if(!password_verify($password, $row["password_hash"])) {
 session_regenerate_id(true);
 $_SESSION["user_id"] = $row["id"];
 
-header("Location: ../../settled-client/pages/placeholder.html");
+header("Location: ../../settled-client/pages/dashboard.php");
 exit;
 
 ?>
