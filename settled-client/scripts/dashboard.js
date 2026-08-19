@@ -30,7 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const card = document.createElement('div');
 
         const name = document.createElement('h3');
-        name.textContent = trip.name;
+        const nameLink = document.createElement('a');
+        nameLink.href = 'trip-view.php?id=' + trip.id;
+        nameLink.textContent = trip.name;
+        name.appendChild(nameLink);
         card.appendChild(name);
 
         const destination = document.createElement('p');
