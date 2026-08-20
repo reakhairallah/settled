@@ -11,6 +11,8 @@ include("../../settled-server/auth_check.php");
 </head>
 <body>
 
+<a href="dashboard.php">&larr; Back to My Trips</a>
+
 <h1>Create a trip</h1>
 <p id="trip-error" style="color: red;"></p>
 
