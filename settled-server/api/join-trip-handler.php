@@ -22,7 +22,7 @@ if($invite_code == "") {
     exit;
 }
 
-$sql = "SELECT id, name, destination FROM trips WHERE invite_code = ?";
+$sql = "SELECT id, name FROM trips WHERE invite_code = ?";
 $query = $mysql->prepare($sql);
 $query->bind_param("s", $invite_code);
 $query->execute();
@@ -53,7 +53,6 @@ $_SESSION["pending_trip_id"] = $trip_id;
 $data = [];
 $data["trip_id"] = $trip_id;
 $data["name"] = $trip["name"];
-$data["destination"] = $trip["destination"];
 echo json_encode(["success" => true, "data" => $data]);
 
 ?>

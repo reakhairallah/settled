@@ -27,12 +27,11 @@ function generate_invite_code() {
 $user_id = $_SESSION["user_id"];
 
 $name = trim($_POST["name"] ?? "");
-$destination = trim($_POST["destination"] ?? "");
 $start_date = trim($_POST["start_date"] ?? "");
 $end_date = trim($_POST["end_date"] ?? "");
 $budget_tier = trim($_POST["budget_tier"] ?? "");
 
-if($name == "" || $destination == "" || $start_date == "" || $end_date == "" || $budget_tier == "") {
+if($name == "" || $start_date == "" || $end_date == "" || $budget_tier == "") {
     echo json_encode(["success" => false, "error" => "All fields are required."]);
     exit;
 }
@@ -78,9 +77,9 @@ if($row["total"] > 0) {
 
 $budget_tier_int = (int)$budget_tier;
 
-$sql = "INSERT INTO trips(created_by, name, destination, start_date, end_date, budget_tier, invite_code) VALUES(?, ?, ?, ?, ?, ?, ?)";
+$sql = "INSERT INTO trips(created_by, name, start_date, end_date, budget_tier, invite_code) VALUES(?, ?, ?, ?, ?, ?)";
 $query = $mysql->prepare($sql);
-$query->bind_param("issssis", $user_id, $name, $destination, $start_date, $end_date, $budget_tier_int, $invite_code);
+$query->bind_param("isssis", $user_id, $name, $start_date, $end_date, $budget_tier_int, $invite_code);
 
 $duplicate_message = insert_or_duplicate_error($query);
 if($duplicate_message != null) {

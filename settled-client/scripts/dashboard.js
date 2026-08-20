@@ -36,10 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
         name.appendChild(nameLink);
         card.appendChild(name);
 
-        const destination = document.createElement('p');
-        destination.textContent = trip.destination;
-        card.appendChild(destination);
-
         const dates = document.createElement('p');
         dates.textContent = trip.start_date + ' to ' + trip.end_date;
         card.appendChild(dates);

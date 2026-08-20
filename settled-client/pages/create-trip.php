@@ -20,9 +20,6 @@ include("../../settled-server/auth_check.php");
     <label for="name">Trip Name</label><br>
     <input type="text" id="name" name="name" required><br>
 
-    <label for="destination">Destination</label><br>
-    <input type="text" id="destination" name="destination" required><br>
-
     <label for="start_date">Start Date</label><br>
     <input type="date" id="start_date" name="start_date" required><br>
 

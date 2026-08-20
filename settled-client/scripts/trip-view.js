@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tripViewError = document.getElementById('trip-view-error');
     const tripName = document.getElementById('trip-name');
-    const tripDestination = document.getElementById('trip-destination');
     const tripDates = document.getElementById('trip-dates');
     const inviteCode = document.getElementById('invite-code');
     const membersContainer = document.getElementById('members-container');
@@ -24,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function render_trip(trip) {
         tripName.textContent = trip.name;
-        tripDestination.textContent = trip.destination;
         tripDates.textContent = trip.start_date + ' to ' + trip.end_date;
         inviteCode.textContent = 'Invite code: ' + trip.invite_code;
     }

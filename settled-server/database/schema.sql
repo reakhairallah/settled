@@ -10,7 +10,6 @@ CREATE TABLE trips (
     id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     created_by      INT UNSIGNED NOT NULL,
     name            VARCHAR(100) NOT NULL,
-    destination     VARCHAR(100) NOT NULL,
     start_date      DATE NOT NULL,
     end_date        DATE NOT NULL,
     budget_tier     TINYINT UNSIGNED NOT NULL,

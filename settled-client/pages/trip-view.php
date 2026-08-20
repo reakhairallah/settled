@@ -16,7 +16,6 @@ include("../../settled-server/auth_check.php");
 <p id="trip-view-error" style="color: red;"></p>
 
 <h1 id="trip-name"></h1>
-<p id="trip-destination"></p>
 <p id="trip-dates"></p>
 <p id="invite-code"></p>
 

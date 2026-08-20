@@ -16,7 +16,7 @@ if(!isset($_SESSION["user_id"])) {
 
 $user_id = $_SESSION["user_id"];
 
-$sql = "SELECT trips.id, trips.name, trips.destination, trips.start_date, trips.end_date, trips.invite_code, COUNT(trip_members.id) AS member_count
+$sql = "SELECT trips.id, trips.name, trips.start_date, trips.end_date, trips.invite_code, COUNT(trip_members.id) AS member_count
         FROM trips
         INNER JOIN trip_members ON trip_members.trip_id = trips.id
         WHERE trips.id IN (SELECT trip_id FROM trip_members WHERE user_id = ?)

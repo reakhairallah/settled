@@ -34,7 +34,7 @@ if($row["total"] == 0) {
     exit;
 }
 
-$sql = "SELECT name, destination, start_date, end_date, invite_code FROM trips WHERE id = ?";
+$sql = "SELECT name, start_date, end_date, invite_code FROM trips WHERE id = ?";
 $query = $mysql->prepare($sql);
 $query->bind_param("i", $trip_id);
 $query->execute();

@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then((response) => {
                 if (response.data.success) {
                     tripId = response.data.data.trip_id;
-                    tripPreview.textContent = "You're joining " + response.data.data.name + " (" + response.data.data.destination + ")";
+                    tripPreview.textContent = "You're joining " + response.data.data.name;
                     joinForm.style.display = 'none';
                     preferencesForm.style.display = 'block';
                 } else {
