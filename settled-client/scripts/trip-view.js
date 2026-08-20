@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const membersContainer = document.getElementById('members-container');
     const generateItineraryButton = document.getElementById('generate-itinerary-button');
     const itineraryMessage = document.getElementById('itinerary-message');
+    const itineraryLink = document.getElementById('itinerary-link');
+
+    itineraryLink.href = 'itinerary.php?id=' + tripId;
 
     generateItineraryButton.addEventListener('click', () => {
         itineraryMessage.textContent = '';
