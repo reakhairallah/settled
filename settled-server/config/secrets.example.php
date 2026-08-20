@@ -1,0 +1,7 @@
+<?php
+
+return [
+    'gemini_api_key' => 'PUT_YOUR_KEY_HERE',
+];
+
+?>
