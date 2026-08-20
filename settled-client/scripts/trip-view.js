@@ -7,6 +7,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const tripDates = document.getElementById('trip-dates');
     const inviteCode = document.getElementById('invite-code');
     const membersContainer = document.getElementById('members-container');
+    const generateItineraryButton = document.getElementById('generate-itinerary-button');
+    const itineraryMessage = document.getElementById('itinerary-message');
+
+    generateItineraryButton.addEventListener('click', () => {
+        itineraryMessage.textContent = '';
+
+        const formData = new FormData();
+        formData.append('trip_id', tripId);
+
+        axios.post('../../settled-server/api/generate-itinerary-handler.php', formData)
+            .then((response) => {
+                if (response.data.success) {
+                    itineraryMessage.textContent = 'Itinerary generated: ' + response.data.data.slots_created + ' slots created.';
+                } else {
+                    itineraryMessage.textContent = response.data.error;
+                }
+            })
+            .catch((error) => {
+                itineraryMessage.textContent = extract_axios_error_message(error);
+            });
+    });
 
     axios.get('../../settled-server/api/trip-view-data-handler.php', { params: { trip_id: tripId } })
         .then((response) => {
