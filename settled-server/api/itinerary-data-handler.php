@@ -34,7 +34,7 @@ if($row["total"] == 0) {
     exit;
 }
 
-$sql = "SELECT itinerary_slots.day_number, itinerary_slots.time_of_day, itinerary_slots.status,
+$sql = "SELECT itinerary_slots.id, itinerary_slots.day_number, itinerary_slots.time_of_day, itinerary_slots.status,
                activities.name, activities.category, activities.cost_tier
         FROM itinerary_slots
         LEFT JOIN activities ON activities.id = itinerary_slots.activity_id
@@ -48,6 +48,7 @@ $array = $query->get_result();
 $slots = [];
 while($row = $array->fetch_assoc()) {
     $slot = [];
+    $slot["id"] = $row["id"];
     $slot["day_number"] = $row["day_number"];
     $slot["time_of_day"] = $row["time_of_day"];
     $slot["status"] = $row["status"];

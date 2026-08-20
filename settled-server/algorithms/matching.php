@@ -1,19 +1,6 @@
 <?php
 
-function match_activity_for_slot($mysql, $trip_id, $time_of_day, $excluded_activity_ids) {
-    $sql = "SELECT budget_tier FROM trips WHERE id = ?";
-    $query = $mysql->prepare($sql);
-    $query->bind_param("i", $trip_id);
-    $query->execute();
-    $array = $query->get_result();
-    $trip = $array->fetch_assoc();
-
-    if($trip == null) {
-        return null;
-    }
-
-    $budget_tier = $trip["budget_tier"];
-
+function get_trip_energy_and_interests($mysql, $trip_id) {
     $sql = "SELECT energy_level, interests FROM trip_members WHERE trip_id = ?";
     $query = $mysql->prepare($sql);
     $query->bind_param("i", $trip_id);
@@ -38,7 +25,34 @@ function match_activity_for_slot($mysql, $trip_id, $time_of_day, $excluded_activ
         return null;
     }
 
-    $target_energy = (int)round($energy_total / $member_count);
+    $result = [];
+    $result["target_energy"] = (int)round($energy_total / $member_count);
+    $result["interest_counts"] = $interest_counts;
+    return $result;
+}
+
+function match_activity_for_slot($mysql, $trip_id, $time_of_day, $excluded_activity_ids) {
+    $sql = "SELECT budget_tier FROM trips WHERE id = ?";
+    $query = $mysql->prepare($sql);
+    $query->bind_param("i", $trip_id);
+    $query->execute();
+    $array = $query->get_result();
+    $trip = $array->fetch_assoc();
+
+    if($trip == null) {
+        return null;
+    }
+
+    $budget_tier = $trip["budget_tier"];
+
+    $trip_data = get_trip_energy_and_interests($mysql, $trip_id);
+
+    if($trip_data == null) {
+        return null;
+    }
+
+    $target_energy = $trip_data["target_energy"];
+    $interest_counts = $trip_data["interest_counts"];
 
     $sql = "SELECT id, name, category, energy_level, time_of_day, cost_tier, description FROM activities WHERE cost_tier <= ? AND time_of_day = ?";
     $types = "is";

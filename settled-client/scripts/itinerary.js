@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const itineraryError = document.getElementById('itinerary-error');
     const daysContainer = document.getElementById('days-container');
     const backLink = document.getElementById('back-link');
+    const blurbCache = {};
 
     backLink.href = 'trip-view.php?id=' + tripId;
 
@@ -85,6 +86,34 @@ document.addEventListener('DOMContentLoaded', () => {
         whyThisPick.className = 'why-this-pick';
         whyThisPick.textContent = '💡 Why This Pick';
         card.appendChild(whyThisPick);
+
+        const blurbPopover = document.createElement('p');
+        blurbPopover.className = 'why-this-pick-blurb';
+        blurbPopover.style.display = 'none';
+        card.appendChild(blurbPopover);
+
+        whyThisPick.addEventListener('click', () => {
+            if (blurbCache[slot.id]) {
+                blurbPopover.textContent = blurbCache[slot.id];
+                blurbPopover.style.display = 'block';
+                return;
+            }
+
+            axios.get('../../settled-server/api/why-this-pick-handler.php', { params: { slot_id: slot.id } })
+                .then((response) => {
+                    if (response.data.success) {
+                        blurbCache[slot.id] = response.data.data.blurb;
+                        blurbPopover.textContent = response.data.data.blurb;
+                    } else {
+                        blurbPopover.textContent = response.data.error;
+                    }
+                    blurbPopover.style.display = 'block';
+                })
+                .catch((error) => {
+                    blurbPopover.textContent = extract_axios_error_message(error);
+                    blurbPopover.style.display = 'block';
+                });
+        });
 
         return card;
     }
