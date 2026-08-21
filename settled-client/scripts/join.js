@@ -12,6 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     wire_segmented(preferencesForm.querySelector('.segmented'), energyLevelInput);
 
+    inviteCodeInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            joinForm.requestSubmit();
+        }
+    });
+
     function reset_form() {
         joinForm.reset();
         preferencesForm.reset();

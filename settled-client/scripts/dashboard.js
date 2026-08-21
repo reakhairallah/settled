@@ -127,17 +127,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const wrap = document.createElement('div');
         wrap.className = 'trip-dates';
 
-        const start = format_date(startDate);
         const end = format_date(endDate);
 
-        const startSpan = document.createElement('span');
-        startSpan.textContent = start.month + ' ' + start.day;
-        wrap.appendChild(startSpan);
+        if (startDate !== endDate) {
+            const start = format_date(startDate);
 
-        const arrow = document.createElement('span');
-        arrow.className = 'arrow';
-        arrow.textContent = '→';
-        wrap.appendChild(arrow);
+            const startSpan = document.createElement('span');
+            startSpan.textContent = start.month + ' ' + start.day;
+            wrap.appendChild(startSpan);
+
+            const arrow = document.createElement('span');
+            arrow.className = 'arrow';
+            arrow.textContent = '→';
+            wrap.appendChild(arrow);
+        }
 
         const endSpan = document.createElement('span');
         endSpan.textContent = end.month + ' ' + end.day;

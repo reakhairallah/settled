@@ -132,7 +132,7 @@ include("../../settled-server/auth_check.php");
 
                 <div class="form-page-head">
                     <h1 id="create-step2-heading">Set your preferences</h1>
-                    <p class="sub">This just tunes what gets suggested for you, nothing is locked in.</p>
+                    <p class="sub">This tunes what gets suggested for you.</p>
                 </div>
 
                 <p id="create-preferences-error" class="error-text"></p>
@@ -211,7 +211,7 @@ include("../../settled-server/auth_check.php");
 
                 <div class="form-page-head">
                     <h1 id="join-step2-heading">Set your preferences</h1>
-                    <p class="sub">This just tunes what gets suggested for you, nothing is locked in.</p>
+                    <p class="sub">This tunes what gets suggested for you.</p>
                 </div>
 
                 <div class="trip-preview-banner" id="join-trip-preview" hidden>

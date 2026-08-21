@@ -32,6 +32,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    [nameInput, startDateInput, endDateInput].forEach((input) => {
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                tripForm.requestSubmit();
+            }
+        });
+    });
+
     function reset_form() {
         tripForm.reset();
         preferencesForm.reset();
