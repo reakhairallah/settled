@@ -2,6 +2,7 @@
 
 include("../database/connection.php");
 include("../db_helpers.php");
+include("../trip_helpers.php");
 include("../algorithms/matching.php");
 
 if(session_status() == PHP_SESSION_NONE) {
@@ -39,19 +40,14 @@ if($slot == null) {
 
 $trip_id = $slot["trip_id"];
 
-$sql = "SELECT id FROM trip_members WHERE trip_id = ? AND user_id = ?";
-$query = $mysql->prepare($sql);
-$query->bind_param("ii", $trip_id, $user_id);
-$query->execute();
-$array = $query->get_result();
-$member = $array->fetch_assoc();
+$trip_member = get_trip_member($mysql, $trip_id, $user_id);
 
-if($member == null) {
+if($trip_member == null) {
     echo json_encode(["success" => false, "error" => "Trip not found."]);
     exit;
 }
 
-$trip_member_id = $member["id"];
+$trip_member_id = $trip_member["id"];
 
 if($slot["status"] == "locked") {
     echo json_encode(["success" => false, "error" => "This slot has already been locked in."]);

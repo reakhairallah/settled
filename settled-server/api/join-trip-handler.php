@@ -1,6 +1,7 @@
 <?php
 
 include("../database/connection.php");
+include("../trip_helpers.php");
 
 if(session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -36,14 +37,9 @@ if($trip == null) {
 
 $trip_id = $trip["id"];
 
-$sql = "SELECT COUNT(*) AS total FROM trip_members WHERE trip_id = ? AND user_id = ?";
-$query = $mysql->prepare($sql);
-$query->bind_param("ii", $trip_id, $user_id);
-$query->execute();
-$array = $query->get_result();
-$row = $array->fetch_assoc();
+$trip_member = get_trip_member($mysql, $trip_id, $user_id);
 
-if($row["total"] > 0) {
+if($trip_member != null) {
     echo json_encode(["success" => false, "error" => "You're already a member of this trip."]);
     exit;
 }
