@@ -34,23 +34,5 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 
-    preferencesForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        preferencesError.textContent = '';
-
-        const formData = new FormData(preferencesForm);
-        formData.append('trip_id', tripId);
-
-        axios.post('../../settled-server/api/trip-preferences-handler.php', formData)
-            .then((response) => {
-                if (response.data.success) {
-                    window.location.href = 'placeholder.html';
-                } else {
-                    preferencesError.textContent = response.data.error;
-                }
-            })
-            .catch((error) => {
-                preferencesError.textContent = extract_axios_error_message(error);
-            });
-    });
+    wire_preferences_form(preferencesForm, preferencesError, () => tripId);
 });
