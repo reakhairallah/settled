@@ -38,7 +38,7 @@ function wire_preferences_form(preferencesForm, preferencesError, getTripId) {
         axios.post('../../settled-server/api/trip-preferences-handler.php', formData)
             .then((response) => {
                 if (response.data.success) {
-                    window.location.href = 'placeholder.html';
+                    window.location.href = 'trip-view.php?id=' + getTripId();
                 } else {
                     preferencesError.textContent = response.data.error;
                 }
