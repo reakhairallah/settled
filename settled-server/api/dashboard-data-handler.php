@@ -31,8 +31,39 @@ while($row = $array->fetch_assoc()) {
     $trips[] = $row;
 }
 
+foreach($trips as &$trip) {
+    $sql = "SELECT users.username
+            FROM trip_members
+            INNER JOIN users ON users.id = trip_members.user_id
+            WHERE trip_members.trip_id = ?
+            ORDER BY trip_members.id ASC";
+    $query = $mysql->prepare($sql);
+    $query->bind_param("i", $trip["id"]);
+    $query->execute();
+    $array = $query->get_result();
+
+    $member_initials = [];
+    while($row = $array->fetch_assoc()) {
+        $member_initials[] = strtoupper(substr($row["username"], 0, 2));
+    }
+    $trip["member_initials"] = $member_initials;
+}
+unset($trip);
+
+$sql = "SELECT id FROM trips
+        WHERE id IN (SELECT trip_id FROM trip_members WHERE user_id = ?) AND start_date >= CURDATE()
+        ORDER BY start_date ASC, id ASC
+        LIMIT 1";
+$query = $mysql->prepare($sql);
+$query->bind_param("i", $user_id);
+$query->execute();
+$array = $query->get_result();
+$row = $array->fetch_assoc();
+$next_trip_id = $row != null ? (int)$row["id"] : null;
+
 $data = [];
 $data["trips"] = $trips;
+$data["next_trip_id"] = $next_trip_id;
 echo json_encode(["success" => true, "data" => $data]);
 
 ?>
