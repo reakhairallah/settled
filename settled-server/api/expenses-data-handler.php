@@ -36,15 +36,15 @@ $sql = "SELECT DISTINCT expenses.id, expenses.amount, expenses.description, paye
         FROM expenses
         INNER JOIN trip_members payer_members ON payer_members.id = expenses.payer_trip_member_id
         INNER JOIN users payer_users ON payer_users.id = payer_members.user_id
-        LEFT JOIN expense_splits ON expense_splits.expense_id = expenses.id
-        WHERE expenses.trip_id = ? AND (expenses.payer_trip_member_id = ? OR expense_splits.trip_member_id = ?)
+        INNER JOIN expense_splits ON expense_splits.expense_id = expenses.id
+        WHERE expenses.trip_id = ?
         ORDER BY expenses.created_at DESC, expenses.id DESC";
 $query = $mysql->prepare($sql);
-$query->bind_param("iii", $trip_id, $trip_member_id, $trip_member_id);
+$query->bind_param("i", $trip_id);
 $query->execute();
 $array = $query->get_result();
 
-$expenses = [];
+$trip_expenses = [];
 while($row = $array->fetch_assoc()) {
     $expense = [];
     $expense["id"] = $row["id"];
@@ -72,11 +72,31 @@ while($row = $array->fetch_assoc()) {
     }
 
     $expense["splits"] = $splits;
-    $expenses[] = $expense;
+    $trip_expenses[] = $expense;
+}
+
+$sql = "SELECT expenses.id, expenses.amount, expenses.description
+        FROM expenses
+        LEFT JOIN expense_splits ON expense_splits.expense_id = expenses.id
+        WHERE expenses.trip_id = ? AND expenses.payer_trip_member_id = ? AND expense_splits.id IS NULL
+        ORDER BY expenses.created_at DESC, expenses.id DESC";
+$query = $mysql->prepare($sql);
+$query->bind_param("ii", $trip_id, $trip_member_id);
+$query->execute();
+$array = $query->get_result();
+
+$personal_expenses = [];
+while($row = $array->fetch_assoc()) {
+    $expense = [];
+    $expense["id"] = $row["id"];
+    $expense["amount"] = $row["amount"];
+    $expense["description"] = $row["description"];
+    $personal_expenses[] = $expense;
 }
 
 $data = [];
-$data["expenses"] = $expenses;
+$data["trip_expenses"] = $trip_expenses;
+$data["personal_expenses"] = $personal_expenses;
 echo json_encode(["success" => true, "data" => $data]);
 
 ?>

@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const addExpenseForm = document.getElementById('add-expense-form');
     const addExpenseError = document.getElementById('add-expense-error');
     const splitMembersContainer = document.getElementById('split-members-container');
-    const expensesContainer = document.getElementById('expenses-container');
+    const tripExpensesContainer = document.getElementById('trip-expenses-container');
+    const personalExpensesContainer = document.getElementById('personal-expenses-container');
 
     let members = [];
 
@@ -54,7 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
         axios.get('../../settled-server/api/expenses-data-handler.php', { params: { trip_id: tripId } })
             .then((response) => {
                 if (response.data.success) {
-                    render_expenses(response.data.data.expenses);
+                    render_trip_expenses(response.data.data.trip_expenses);
+                    render_personal_expenses(response.data.data.personal_expenses);
                 } else {
                     expensesError.textContent = response.data.error;
                 }
@@ -85,22 +87,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function render_expenses(expenses) {
-        expensesContainer.textContent = '';
+    function render_trip_expenses(tripExpenses) {
+        tripExpensesContainer.textContent = '';
 
-        if (expenses.length === 0) {
+        if (tripExpenses.length === 0) {
             const emptyMessage = document.createElement('p');
-            emptyMessage.textContent = 'No expenses yet.';
-            expensesContainer.appendChild(emptyMessage);
+            emptyMessage.textContent = 'No trip expenses yet.';
+            tripExpensesContainer.appendChild(emptyMessage);
             return;
         }
 
-        expenses.forEach((expense) => {
-            expensesContainer.appendChild(build_expense_card(expense));
+        tripExpenses.forEach((expense) => {
+            tripExpensesContainer.appendChild(build_trip_expense_card(expense));
         });
     }
 
-    function build_expense_card(expense) {
+    function build_trip_expense_card(expense) {
         const card = document.createElement('div');
         card.className = 'expense-card';
 
@@ -113,13 +115,35 @@ document.addEventListener('DOMContentLoaded', () => {
         card.appendChild(payerLine);
 
         const splitLine = document.createElement('p');
-        if (expense.splits.length === 0) {
-            splitLine.textContent = 'Personal expense';
-        } else {
-            const splitText = expense.splits.map((split) => split.username + ' ($' + split.share_amount + ')').join(', ');
-            splitLine.textContent = 'Split with: ' + splitText;
-        }
+        const splitText = expense.splits.map((split) => split.username + ' ($' + split.share_amount + ')').join(', ');
+        splitLine.textContent = 'Split with: ' + splitText;
         card.appendChild(splitLine);
+
+        return card;
+    }
+
+    function render_personal_expenses(personalExpenses) {
+        personalExpensesContainer.textContent = '';
+
+        if (personalExpenses.length === 0) {
+            const emptyMessage = document.createElement('p');
+            emptyMessage.textContent = 'No personal expenses yet.';
+            personalExpensesContainer.appendChild(emptyMessage);
+            return;
+        }
+
+        personalExpenses.forEach((expense) => {
+            personalExpensesContainer.appendChild(build_personal_expense_card(expense));
+        });
+    }
+
+    function build_personal_expense_card(expense) {
+        const card = document.createElement('div');
+        card.className = 'expense-card';
+
+        const amountLine = document.createElement('p');
+        amountLine.textContent = '$' + expense.amount + (expense.description ? ' - ' + expense.description : '');
+        card.appendChild(amountLine);
 
         return card;
     }

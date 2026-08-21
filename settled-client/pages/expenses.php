@@ -32,8 +32,13 @@ include("../../settled-server/auth_check.php");
 </form>
 <p id="add-expense-error" style="color: red;"></p>
 
-<h2>All Expenses</h2>
-<div id="expenses-container"></div>
+<h2>Trip Expenses</h2>
+<p>Shared expenses, visible to every trip member.</p>
+<div id="trip-expenses-container"></div>
+
+<h2>My Personal Expenses</h2>
+<p>Only visible to you.</p>
+<div id="personal-expenses-container"></div>
 
 <script src="../scripts/axios.min.js"></script>
 <script src="../scripts/helper.js"></script>
