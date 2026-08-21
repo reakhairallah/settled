@@ -37,7 +37,7 @@ $query->execute();
 $array = $query->get_result();
 $trip = $array->fetch_assoc();
 
-$sql = "SELECT users.username, trip_members.energy_level, trip_members.interests
+$sql = "SELECT trip_members.id, users.username, trip_members.energy_level, trip_members.interests
         FROM trip_members
         INNER JOIN users ON users.id = trip_members.user_id
         WHERE trip_members.trip_id = ?";

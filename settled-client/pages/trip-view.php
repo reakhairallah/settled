@@ -20,7 +20,7 @@ include("../../settled-server/auth_check.php");
 <p id="invite-code"></p>
 
 <a id="itinerary-link" href="placeholder.html">Itinerary</a>
-<a href="placeholder.html">Expenses</a>
+<a id="expenses-link" href="placeholder.html">Expenses</a>
 
 <button id="generate-itinerary-button">Generate Itinerary</button>
 <p id="itinerary-message"></p>
