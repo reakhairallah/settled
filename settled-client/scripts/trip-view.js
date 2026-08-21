@@ -11,9 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const itineraryMessage = document.getElementById('itinerary-message');
     const itineraryLink = document.getElementById('itinerary-link');
     const expensesLink = document.getElementById('expenses-link');
+    const settleUpLink = document.getElementById('settle-up-link');
 
     itineraryLink.href = 'itinerary.php?id=' + tripId;
     expensesLink.href = 'expenses.php?id=' + tripId;
+    settleUpLink.href = 'settle-up.php?id=' + tripId;
 
     generateItineraryButton.addEventListener('click', () => {
         itineraryMessage.textContent = '';

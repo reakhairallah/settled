@@ -21,6 +21,7 @@ include("../../settled-server/auth_check.php");
 
 <a id="itinerary-link" href="placeholder.html">Itinerary</a>
 <a id="expenses-link" href="placeholder.html">Expenses</a>
+<a id="settle-up-link" href="placeholder.html">Settle Up</a>
 
 <button id="generate-itinerary-button">Generate Itinerary</button>
 <p id="itinerary-message"></p>
