@@ -82,6 +82,73 @@ document.addEventListener('DOMContentLoaded', () => {
         voteDown.textContent = '👎';
         card.appendChild(voteDown);
 
+        voteUp.disabled = slot.status !== 'proposed';
+        voteDown.disabled = slot.status !== 'proposed';
+
+        const voteTally = document.createElement('p');
+        voteTally.className = 'vote-tally';
+        card.appendChild(voteTally);
+
+        const voteError = document.createElement('p');
+        voteError.className = 'vote-error';
+        voteError.style.color = 'red';
+        card.appendChild(voteError);
+
+        function cast_vote(voteValue) {
+            voteError.textContent = '';
+
+            const formData = new FormData();
+            formData.append('slot_id', slot.id);
+            formData.append('vote', voteValue);
+
+            axios.post('../../settled-server/api/vote-handler.php', formData)
+                .then((response) => {
+                    if (response.data.success) {
+                        const result = response.data.data;
+
+                        voteTally.textContent = result.up_count + ' up / ' + result.down_count + ' down';
+                        voteUp.classList.toggle('voted', result.your_vote === 'up');
+                        voteDown.classList.toggle('voted', result.your_vote === 'down');
+
+                        if (result.status !== slot.status || result.activity) {
+                            delete blurbCache[slot.id];
+                            blurbPopover.textContent = '';
+                            blurbPopover.style.display = 'none';
+                        }
+
+                        slot.status = result.status;
+                        slot.activity = result.activity;
+
+                        status.textContent = slot.status;
+
+                        if (slot.activity) {
+                            activityLine.className = '';
+                            activityLine.textContent = slot.activity.name + ' (' + slot.activity.category + ', cost tier ' + slot.activity.cost_tier + ')';
+                        } else {
+                            activityLine.className = 'assign-slot';
+                            activityLine.textContent = 'Empty slot — click to assign';
+                        }
+
+                        const votable = slot.status === 'proposed';
+                        voteUp.disabled = !votable;
+                        voteDown.disabled = !votable;
+
+                        if (!votable) {
+                            voteUp.classList.remove('voted');
+                            voteDown.classList.remove('voted');
+                        }
+                    } else {
+                        voteError.textContent = response.data.error;
+                    }
+                })
+                .catch((error) => {
+                    voteError.textContent = extract_axios_error_message(error);
+                });
+        }
+
+        voteUp.addEventListener('click', () => cast_vote('up'));
+        voteDown.addEventListener('click', () => cast_vote('down'));
+
         const whyThisPick = document.createElement('button');
         whyThisPick.className = 'why-this-pick';
         whyThisPick.textContent = '💡 Why This Pick';
