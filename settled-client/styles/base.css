@@ -330,10 +330,16 @@ body {
 .field-row .field { margin-bottom: 0; }
 .field label { font-size: 13px; font-weight: 600; color: var(--ink-soft); }
 
+.field-hint { font-size: 11.5px; font-weight: 500; color: var(--ink-faint); margin: -10px 0 16px; }
+
 .optional-tag { font-weight: 500; color: var(--ink-faint); font-size: 12px; }
 
 .field input[type="text"]:not(.invite-input),
+.field input[type="email"],
+.field input[type="password"],
 .field input[type="date"] {
+    width: 100%;
+    min-width: 0;
     font-family: "Plus Jakarta Sans", sans-serif;
     font-size: 14px;
     color: var(--ink);
@@ -342,6 +348,10 @@ body {
     border-radius: 12px;
     padding: 11px 14px;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.field input[type="password"] {
+    font-family: "Space Mono", monospace;
+    letter-spacing: 0.05em;
 }
 .field input:focus-visible {
     outline: none;
