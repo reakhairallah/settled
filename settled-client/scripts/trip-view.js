@@ -12,6 +12,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const itineraryLink = document.getElementById('itinerary-link');
     const expensesLink = document.getElementById('expenses-link');
     const settleUpLink = document.getElementById('settle-up-link');
+    const copyInviteCodeButton = document.getElementById('copy-invite-code-btn');
+    const copyInviteLinkButton = document.getElementById('copy-invite-link-btn');
+    let currentInviteCode = null;
+
+    function copy_with_feedback(button, text) {
+        navigator.clipboard.writeText(text).then(() => {
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 1500);
+        });
+    }
+
+    copyInviteCodeButton.addEventListener('click', () => {
+        if (currentInviteCode) {
+            copy_with_feedback(copyInviteCodeButton, currentInviteCode);
+        }
+    });
+
+    copyInviteLinkButton.addEventListener('click', () => {
+        if (currentInviteCode) {
+            copy_with_feedback(copyInviteLinkButton, build_invite_link(currentInviteCode));
+        }
+    });
 
     itineraryLink.href = 'itinerary.php?id=' + tripId;
     expensesLink.href = 'expenses.php?id=' + tripId;
@@ -53,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tripName.textContent = trip.name;
         tripDates.textContent = trip.start_date + ' to ' + trip.end_date;
         inviteCode.textContent = 'Invite code: ' + trip.invite_code;
+        currentInviteCode = trip.invite_code;
     }
 
     function render_members(members) {

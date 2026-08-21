@@ -24,6 +24,7 @@
 .trip-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    align-items: start;
     gap: 24px;
 }
 
@@ -89,6 +90,11 @@
 }
 
 .trip-name a {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    overflow-wrap: break-word;
     color: var(--ink);
     text-decoration: none;
 }
@@ -180,10 +186,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: 10px;
     padding: 4px 20px 18px;
     background: var(--surface);
 }
+
+.stub-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
 
 .code-block { display: flex; flex-direction: column; gap: 2px; }
 
@@ -208,14 +217,15 @@
     position: relative;
     z-index: 1;
     font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 700;
     color: var(--ink-soft);
     background: var(--surface-alt);
     border: 1px solid transparent;
     border-radius: 999px;
-    padding: 7px 12px;
+    padding: 6px 10px;
     cursor: pointer;
+    white-space: nowrap;
     transition: border-color 0.12s ease, color 0.12s ease, transform 0.12s ease, background 0.12s ease;
 }
 .copy-btn:hover { color: var(--accent); background: var(--accent-soft); }

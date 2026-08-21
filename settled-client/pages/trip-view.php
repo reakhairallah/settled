@@ -18,6 +18,8 @@ include("../../settled-server/auth_check.php");
 <h1 id="trip-name"></h1>
 <p id="trip-dates"></p>
 <p id="invite-code"></p>
+<button id="copy-invite-code-btn" type="button">Copy invite code</button>
+<button id="copy-invite-link-btn" type="button">Copy invite link</button>
 
 <a id="itinerary-link" href="placeholder.html">Itinerary</a>
 <a id="expenses-link" href="placeholder.html">Expenses</a>

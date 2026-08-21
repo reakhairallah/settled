@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     init_topbar('dashboard');
+    init_modal_shell();
 
     const tripsContainer = document.getElementById('trips-container');
     const emptyState = document.getElementById('empty-state');
@@ -181,6 +182,24 @@ document.addEventListener('DOMContentLoaded', () => {
         return metaRow;
     }
 
+    function build_copy_button(label, textToCopy) {
+        const button = document.createElement('button');
+        button.className = 'copy-btn';
+        button.type = 'button';
+        button.textContent = label;
+        button.addEventListener('click', () => {
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                button.textContent = 'Copied';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = label;
+                    button.classList.remove('copied');
+                }, 1400);
+            });
+        });
+        return button;
+    }
+
     function build_code_stub(inviteCode) {
         const stub = document.createElement('div');
         stub.className = 'trip-code-stub';
@@ -200,21 +219,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         stub.appendChild(codeBlock);
 
-        const copyBtn = document.createElement('button');
-        copyBtn.className = 'copy-btn';
-        copyBtn.type = 'button';
-        copyBtn.textContent = 'Copy';
-        copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(inviteCode).then(() => {
-                copyBtn.textContent = 'Copied';
-                copyBtn.classList.add('copied');
-                setTimeout(() => {
-                    copyBtn.textContent = 'Copy';
-                    copyBtn.classList.remove('copied');
-                }, 1400);
-            });
-        });
-        stub.appendChild(copyBtn);
+        const stubActions = document.createElement('div');
+        stubActions.className = 'stub-actions';
+        stubActions.appendChild(build_copy_button('Copy', inviteCode));
+        stubActions.appendChild(build_copy_button('Copy link', build_invite_link(inviteCode)));
+        stub.appendChild(stubActions);
 
         return stub;
     }

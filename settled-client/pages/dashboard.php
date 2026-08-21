@@ -21,8 +21,8 @@ include("../../settled-server/auth_check.php");
         <a class="nav-link" data-page="dashboard" href="dashboard.php">Dashboard</a>
     </nav>
     <div class="topbar-actions">
-        <a class="btn btn-ghost btn-sm" href="join.php">Join a trip</a>
-        <a class="btn btn-primary btn-sm" href="create-trip.php">＋ Create a trip</a>
+        <button type="button" class="btn btn-ghost btn-sm" data-modal="join">Join a trip</button>
+        <button type="button" class="btn btn-primary btn-sm" data-modal="create">＋ Create a trip</button>
         <div class="profile-wrap" tabindex="0">
             <div class="profile-avatar" id="profile-avatar"></div>
             <div class="profile-dropdown">
@@ -69,15 +69,207 @@ include("../../settled-server/auth_check.php");
     <h2>No trips booked yet</h2>
     <p>Start one from scratch, or use an invite code from a friend to join theirs.</p>
     <div class="empty-actions">
-        <a class="btn btn-ghost" href="join.php">Join a trip</a>
-        <a class="btn btn-primary" href="create-trip.php">＋ Create a trip</a>
+        <button type="button" class="btn btn-ghost" data-modal="join">Join a trip</button>
+        <button type="button" class="btn btn-primary" data-modal="create">＋ Create a trip</button>
     </div>
 </div>
 
 </div>
 
+<dialog class="modal-panel" id="modal-panel">
+    <button class="modal-close" type="button" id="modal-close" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+
+    <div class="modal-content" id="create-modal-content" hidden>
+        <form id="create-trip-form" novalidate>
+            <div class="form-steps">
+                <div class="form-step active">Trip details</div>
+                <div class="form-step">Preferences</div>
+            </div>
+
+            <div class="form-page-head">
+                <h1 id="create-step1-heading">Create a trip</h1>
+                <p class="sub">Give it a name and some basics, you can invite everyone right after.</p>
+            </div>
+
+                <p id="create-trip-error" class="error-text"></p>
+
+                <div class="field">
+                    <label for="name">Trip name</label>
+                    <input type="text" id="name" name="name" placeholder="Lisbon Long Weekend" required>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="start_date">Start date</label>
+                        <input type="date" id="start_date" name="start_date" required>
+                    </div>
+                    <div class="field">
+                        <label for="end_date">End date</label>
+                        <input type="date" id="end_date" name="end_date" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Budget</label>
+                    <input type="hidden" name="budget_tier" id="create-budget-tier">
+                    <div class="segmented">
+                        <button type="button" class="segmented-option" data-value="1">$</button>
+                        <button type="button" class="segmented-option" data-value="2">$$</button>
+                        <button type="button" class="segmented-option" data-value="3">$$$</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Continue</button>
+            </form>
+
+            <form id="create-preferences-form" novalidate hidden>
+                <div class="form-steps">
+                    <div class="form-step">Trip details</div>
+                    <div class="form-step active">Preferences</div>
+                </div>
+
+                <div class="form-page-head">
+                    <h1 id="create-step2-heading">Set your preferences</h1>
+                    <p class="sub">This just tunes what gets suggested for you, nothing is locked in.</p>
+                </div>
+
+                <p id="create-preferences-error" class="error-text"></p>
+
+                <div class="field">
+                    <label>Energy level</label>
+                    <input type="hidden" name="energy_level" id="create-energy-level">
+                    <div class="segmented">
+                        <button type="button" class="segmented-option" data-value="1">Low</button>
+                        <button type="button" class="segmented-option" data-value="2">Medium</button>
+                        <button type="button" class="segmented-option" data-value="3">High</button>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Interests <span class="optional-tag">optional</span></label>
+                    <div class="chip-select">
+                        <label class="chip-option">
+                            <input type="checkbox" name="interests[]" value="Food & Dining">
+                            <span>Food & Dining</span>
+                        </label>
+                        <label class="chip-option">
+                            <input type="checkbox" name="interests[]" value="Outdoors">
+                            <span>Outdoors</span>
+                        </label>
+                        <label class="chip-option">
+                            <input type="checkbox" name="interests[]" value="Nightlife">
+                            <span>Nightlife</span>
+                        </label>
+                        <label class="chip-option">
+                            <input type="checkbox" name="interests[]" value="Culture & Museums">
+                            <span>Culture & Museums</span>
+                        </label>
+                        <label class="chip-option">
+                            <input type="checkbox" name="interests[]" value="Shopping">
+                            <span>Shopping</span>
+                        </label>
+                        <label class="chip-option">
+                            <input type="checkbox" name="interests[]" value="Relaxation">
+                            <span>Relaxation</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Finish setup</button>
+            </form>
+        </div>
+
+        <div class="modal-content" id="join-modal-content" hidden>
+            <form id="join-form" novalidate>
+                <div class="form-steps">
+                    <div class="form-step active">Invite code</div>
+                    <div class="form-step">Preferences</div>
+                </div>
+
+                <div class="form-page-head">
+                    <h1 id="join-step1-heading">Join a trip</h1>
+                    <p class="sub">Enter the invite code someone on the trip sent you.</p>
+                </div>
+
+                <p id="join-error" class="error-text"></p>
+
+                <div class="field invite-field">
+                    <label for="invite_code">Invite code</label>
+                    <input type="text" id="invite_code" name="invite_code" class="invite-input" placeholder="LISBON4" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Find trip</button>
+            </form>
+
+            <form id="join-preferences-form" novalidate hidden>
+                <div class="form-steps">
+                    <div class="form-step">Invite code</div>
+                    <div class="form-step active">Preferences</div>
+                </div>
+
+                <div class="form-page-head">
+                    <h1 id="join-step2-heading">Set your preferences</h1>
+                    <p class="sub">This just tunes what gets suggested for you, nothing is locked in.</p>
+                </div>
+
+                <div class="trip-preview-banner" id="join-trip-preview" hidden>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>
+                    <span id="join-trip-preview-text"></span>
+                </div>
+
+                <p id="join-preferences-error" class="error-text"></p>
+
+                <div class="field">
+                    <label>Energy level</label>
+                    <input type="hidden" name="energy_level" id="join-energy-level">
+                    <div class="segmented">
+                        <button type="button" class="segmented-option" data-value="1">Low</button>
+                        <button type="button" class="segmented-option" data-value="2">Medium</button>
+                        <button type="button" class="segmented-option" data-value="3">High</button>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Interests <span class="optional-tag">optional</span></label>
+                    <div class="chip-select">
+                        <label class="chip-option">
+                            <input type="checkbox" name="interests[]" value="Food & Dining">
+                            <span>Food & Dining</span>
+                        </label>
+                        <label class="chip-option">
+                            <input type="checkbox" name="interests[]" value="Outdoors">
+                            <span>Outdoors</span>
+                        </label>
+                        <label class="chip-option">
+                            <input type="checkbox" name="interests[]" value="Nightlife">
+                            <span>Nightlife</span>
+                        </label>
+                        <label class="chip-option">
+                            <input type="checkbox" name="interests[]" value="Culture & Museums">
+                            <span>Culture & Museums</span>
+                        </label>
+                        <label class="chip-option">
+                            <input type="checkbox" name="interests[]" value="Shopping">
+                            <span>Shopping</span>
+                        </label>
+                        <label class="chip-option">
+                            <input type="checkbox" name="interests[]" value="Relaxation">
+                            <span>Relaxation</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Finish setup</button>
+            </form>
+        </div>
+</dialog>
+
 <script src="../scripts/axios.min.js"></script>
 <script src="../scripts/helper.js"></script>
 <script src="../scripts/dashboard.js"></script>
+<script src="../scripts/create-trip.js"></script>
+<script src="../scripts/join.js"></script>
 </body>
 </html>

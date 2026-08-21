@@ -67,10 +67,88 @@ function init_topbar(activePage) {
     });
 }
 
+function wire_segmented(container, hiddenInput) {
+    container.querySelectorAll('.segmented-option').forEach((button) => {
+        button.addEventListener('click', () => {
+            container.querySelectorAll('.segmented-option').forEach((b) => b.classList.remove('selected'));
+            button.classList.add('selected');
+            hiddenInput.value = button.dataset.value;
+        });
+    });
+}
+
+let modalTriggerEl = null;
+
+function set_modal_label(contentEl) {
+    const heading = contentEl.querySelector('form:not([hidden]) h1');
+    const dialog = document.getElementById('modal-panel');
+    if (heading && dialog) {
+        dialog.setAttribute('aria-labelledby', heading.id);
+    }
+}
+
+function focus_first_field(contentEl) {
+    const field = contentEl.querySelector('form:not([hidden]) input, form:not([hidden]) button, form:not([hidden]) select, form:not([hidden]) textarea');
+    if (field) {
+        field.focus();
+    }
+}
+
+function open_modal(contentEl, triggerEl) {
+    const dialog = document.getElementById('modal-panel');
+
+    document.querySelectorAll('.modal-content').forEach((el) => el.setAttribute('hidden', ''));
+    contentEl.removeAttribute('hidden');
+
+    modalTriggerEl = triggerEl || document.activeElement;
+
+    set_modal_label(contentEl);
+    dialog.showModal();
+    focus_first_field(contentEl);
+}
+
+function close_modal() {
+    document.getElementById('modal-panel').close();
+}
+
+function build_invite_link(inviteCode) {
+    return new URL('join.php?code=' + encodeURIComponent(inviteCode), window.location.href).href;
+}
+
+function init_modal_shell() {
+    const dialog = document.getElementById('modal-panel');
+    const closeBtn = document.getElementById('modal-close');
+
+    closeBtn.addEventListener('click', close_modal);
+
+    dialog.addEventListener('click', (event) => {
+        const rect = dialog.getBoundingClientRect();
+        const clickedInside = event.clientX >= rect.left && event.clientX <= rect.right
+            && event.clientY >= rect.top && event.clientY <= rect.bottom;
+        if (!clickedInside) {
+            close_modal();
+        }
+    });
+
+    dialog.addEventListener('close', () => {
+        if (modalTriggerEl) {
+            modalTriggerEl.focus();
+            modalTriggerEl = null;
+        }
+        document.dispatchEvent(new CustomEvent('modal:closed'));
+    });
+}
+
 function wire_preferences_form(preferencesForm, preferencesError, getTripId) {
     preferencesForm.addEventListener('submit', (event) => {
         event.preventDefault();
         preferencesError.textContent = '';
+
+        const energyLevelInput = preferencesForm.querySelector('input[name="energy_level"]');
+        if (!energyLevelInput.value) {
+            preferencesError.textContent = 'Please select an energy level.';
+            return;
+        }
 
         const formData = new FormData(preferencesForm);
         formData.append('trip_id', getTripId());
