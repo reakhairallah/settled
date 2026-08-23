@@ -154,6 +154,14 @@ body {
     flex-shrink: 0;
 }
 
+.topbar-cta { display: flex; gap: 10px; }
+
+/* Dashboard's topbar has no real nav (the lone "Dashboard" link was removed as
+   redundant self-wayfinding) but still needs something to grow and push
+   .topbar-actions to the right, which is what .topbar-nav's flex:1 was actually
+   doing for it — a plain empty spacer takes over that one job. */
+.topbar-spacer { flex: 1; }
+
 /* ---- Buttons ---- */
 .btn {
     font-family: "Plus Jakarta Sans", sans-serif;
@@ -503,9 +511,34 @@ body {
 .modal-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 @media (max-width: 640px) {
+    /* The wordmark gets its own full-width row, and the avatar + CTA buttons
+       share one clean second row underneath it (avatar left, buttons right).
+       `.topbar-actions` is dissolved via `display: contents` so its two
+       children (`.topbar-cta` and `.profile-wrap`) act as direct flex items of
+       `.topbar` itself, instead of nesting one flex-wrap inside another (tried
+       first, technically worked, looked wrong regardless).
+
+       The line break itself is a generated `::after` on `.topbar`, not
+       `flex-basis: 100%` on `.wordmark-text` directly — that was tried first
+       and broke the wordmark's own highlight band: `flex-basis: 100%` doesn't
+       just force a new line, it also stretches the wordmark's own box to the
+       full row width, and the highlight `::after` (positioned `left:-2px;
+       right:-2px` relative to that box) stretched right along with it into a
+       long bar spanning the whole row instead of just sitting under the
+       letters. A separate, empty, full-width flex item dedicated to forcing
+       the wrap keeps `.wordmark-text` itself sized to its actual text. */
     .topbar { flex-wrap: wrap; row-gap: 12px; }
-    .topbar-nav { order: 3; flex-basis: 100%; }
-    .topbar-actions { margin-left: auto; }
+    .topbar::after { content: ""; order: 1; flex-basis: 100%; }
+    .topbar-spacer { display: none; }
+    .topbar-actions { display: contents; }
+    .profile-wrap { order: 2; }
+    .topbar-cta { order: 3; margin-left: auto; }
+    /* .field-row (start/end date in the create-trip modal) was a fixed 2-column
+       grid with no mobile override — inside the ~360-400px-wide modal on a phone
+       that left each date field only ~120-130px, uncomfortably tight for a date
+       input. Stack to one column instead; the existing 12px gap becomes row-gap
+       automatically and is close enough to every other field's 16px spacing. */
+    .field-row { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -265,3 +265,22 @@
 
 .empty-state p { color: var(--ink-soft); font-size: 14.5px; max-width: 34ch; margin: -4px 0 4px; }
 .empty-actions { display: flex; gap: 10px; }
+
+/* .trip-grid's minmax(300px, 1fr) floor sits right at the edge of the narrowest
+   real phones (~360px screen minus .page's 56px of side padding leaves ~304px)
+   — comfortable on most devices but a genuine horizontal-overflow risk below
+   that. Force a single explicit column instead of relying on the auto-fill
+   floor once the viewport is narrow enough for it to matter; 1fr always fits
+   whatever width is actually available, no minimum to overflow against. */
+@media (max-width: 640px) {
+    .trip-grid { grid-template-columns: 1fr; }
+    /* .profile-dropdown normally anchors `right: 0` and expands leftward from
+       the avatar, which makes sense when the avatar sits at the right edge of
+       the screen (desktop, and mobile before the topbar restructure). Now that
+       mobile moves the avatar to the *left* side of its row (see base.css's
+       topbar media query), that same leftward expansion runs the dropdown off
+       the left edge of the screen instead. Flip the anchor to expand rightward
+       instead, scoped to dashboard specifically since this is a consequence of
+       dashboard's mobile avatar position, not a general one. */
+    .profile-dropdown { left: 0; right: auto; transform-origin: top left; }
+}

@@ -9,8 +9,8 @@ include("../../settled-server/auth_check.php");
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Trip — Settled</title>
-<link rel="stylesheet" href="../styles/base.css">
-<link rel="stylesheet" href="../styles/trip-view.css?v=4">
+<link rel="stylesheet" href="../styles/base.css?v=4">
+<link rel="stylesheet" href="../styles/trip-view.css?v=7">
 </head>
 <body>
 
@@ -20,7 +20,6 @@ include("../../settled-server/auth_check.php");
     <a class="wordmark-text" href="dashboard.php"><span>Settled.</span></a>
     <nav class="topbar-nav">
         <a class="trip-pill" id="trip-pill" href="#trip-details">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
             <span id="trip-pill-name">Trip</span>
         </a>
     </nav>

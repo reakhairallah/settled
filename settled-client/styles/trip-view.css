@@ -20,17 +20,23 @@
     transition: background 0.15s ease;
 }
 .trip-pill:hover { background: color-mix(in srgb, var(--accent) 22%, var(--accent-soft)); }
-.trip-pill svg { flex-shrink: 0; opacity: 0.75; }
 .trip-pill span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .trip-pill:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* base.css's shared topbar wraps `.topbar-nav` onto its own row under 640px, which
-   suits a multi-link nav but not this page's single trip-name pill: overridden
-   here so it stays on one line with the wordmark and profile, truncating instead. */
+/* base.css's shared topbar has a two-row mobile layout (wordmark alone on its own
+   row, forced by a generated `::after` line-break, then the avatar + CTA
+   buttons below it) built for dashboard's busier topbar — this page's topbar is
+   simpler (just the trip pill + avatar) and was already working fine on one
+   row, so every part of that scheme is reset back to normal, single-row
+   behavior here. Nothing in dashboard's own override resets these, because
+   dashboard wants them; this page has to do it explicitly or it inherits a
+   layout meant for a topbar with different pieces in it. */
 .topbar-nav { min-width: 0; }
 @media (max-width: 640px) {
     .topbar { flex-wrap: nowrap; row-gap: 0; }
+    .topbar::after { content: none; }
     .topbar-nav { order: initial; flex-basis: auto; }
+    .topbar-actions { display: flex; }
 }
 
 #trip-details { scroll-margin-top: 20px; }

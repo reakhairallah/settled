@@ -9,8 +9,8 @@ include("../../settled-server/auth_check.php");
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Trips — Settled</title>
-<link rel="stylesheet" href="../styles/base.css">
-<link rel="stylesheet" href="../styles/dashboard.css">
+<link rel="stylesheet" href="../styles/base.css?v=4">
+<link rel="stylesheet" href="../styles/dashboard.css?v=3">
 </head>
 <body>
 
@@ -18,12 +18,12 @@ include("../../settled-server/auth_check.php");
 
 <div class="topbar">
     <a class="wordmark-text" href="dashboard.php"><span>Settled.</span></a>
-    <nav class="topbar-nav">
-        <a class="nav-link" data-page="dashboard" href="dashboard.php">Dashboard</a>
-    </nav>
+    <div class="topbar-spacer"></div>
     <div class="topbar-actions">
-        <button type="button" class="btn btn-ghost btn-sm" data-modal="join">Join a trip</button>
-        <button type="button" class="btn btn-primary btn-sm" data-modal="create">＋ Create a trip</button>
+        <div class="topbar-cta">
+            <button type="button" class="btn btn-ghost btn-sm" data-modal="join">Join a trip</button>
+            <button type="button" class="btn btn-primary btn-sm" data-modal="create">＋ Create a trip</button>
+        </div>
         <div class="profile-wrap" tabindex="0">
             <div class="profile-avatar" id="profile-avatar"></div>
             <div class="profile-dropdown">
@@ -268,8 +268,8 @@ include("../../settled-server/auth_check.php");
 </dialog>
 
 <script src="../scripts/axios.min.js"></script>
-<script src="../scripts/helper.js"></script>
-<script src="../scripts/dashboard.js"></script>
+<script src="../scripts/helper.js?v=2"></script>
+<script src="../scripts/dashboard.js?v=2"></script>
 <script src="../scripts/create-trip.js"></script>
 <script src="../scripts/join.js"></script>
 </body>
