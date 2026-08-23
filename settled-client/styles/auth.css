@@ -6,16 +6,28 @@ body {
     padding: 32px 20px;
 }
 
+/* The card, not the wordmark+card group, is what should sit at the viewport's
+   vertical center — the wordmark visually reads as a label above the card, not
+   as equal-weight content. Centering the whole group (the first version) let the
+   wordmark's own height push the card noticeably below true center. Fixed by
+   taking the wordmark out of normal flow (`position: absolute`, anchored to the
+   card's own top edge via `bottom: 100%`) so it no longer factors into
+   `.auth-page`'s height, which `body`'s flex centering uses. */
 .auth-page {
+    position: relative;
     width: 100%;
     max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 28px;
 }
 
-.auth-page .wordmark-text { font-size: 32px; }
+.auth-page .wordmark-text {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 28px;
+    font-size: 32px;
+    white-space: nowrap;
+}
 
 .auth-card {
     width: 100%;

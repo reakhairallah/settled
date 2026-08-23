@@ -66,12 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.max(0, Math.round((start - today) / 86400000));
     }
 
-    function format_date(dateStr) {
-        const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-        const [y, m, d] = dateStr.split('-').map(Number);
-        return { month: months[m - 1], day: String(d).padStart(2, '0'), year: String(y) };
-    }
-
     function build_trip_card(trip, isNextUp) {
         const card = document.createElement('div');
         card.className = 'trip-card';

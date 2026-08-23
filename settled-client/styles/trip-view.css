@@ -1,0 +1,283 @@
+/* ---- Screen-reader-only utility: the page's real h1 (trip name is already shown
+   in the topbar pill and the trip pass below, so this exists for document
+   structure/a11y only) plus the whole-card hit target on each widget below. ---- */
+.sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+/* ---- Trip name pill in the topbar. Deliberately its own class, not `.nav-link`:
+   init_topbar()'s forEach touches every `.nav-link` and disables clicks on
+   whichever one matches the active page, but this pill is a same-page anchor
+   down to #trip-details, not a link to another page, so it needs to stay a real,
+   clickable link and shouldn't be managed by that logic at all. ---- */
+.trip-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 14px; font-weight: 600; text-decoration: none;
+    color: var(--accent); background: var(--accent-soft);
+    padding: 8px 14px; border-radius: 999px;
+    max-width: 100%; min-width: 0;
+    transition: background 0.15s ease;
+}
+.trip-pill:hover { background: color-mix(in srgb, var(--accent) 22%, var(--accent-soft)); }
+.trip-pill svg { flex-shrink: 0; opacity: 0.75; }
+.trip-pill span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trip-pill:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* base.css's shared topbar wraps `.topbar-nav` onto its own row under 640px, which
+   suits a multi-link nav but not this page's single trip-name pill: overridden
+   here so it stays on one line with the wordmark and profile, truncating instead. */
+.topbar-nav { min-width: 0; }
+@media (max-width: 640px) {
+    .topbar { flex-wrap: nowrap; row-gap: 0; }
+    .topbar-nav { order: initial; flex-basis: auto; }
+}
+
+#trip-details { scroll-margin-top: 20px; }
+
+/* ---- Section heading ---- */
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
+.section-head h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 18px; margin: 0; }
+.section-head .sub { font-size: 13px; color: var(--ink-soft); margin: 0; }
+
+/* ---- Widget cards: the priority content, right under the topbar ----
+   Each card is a plain div, and the whole-card click-through is a real `<a>`
+   positioned to fill it directly: `.widget-card-hitbox` itself gets
+   `position: absolute; inset: 0`, not a `::after` on an `.sr-only`-positioned
+   anchor. That combination was tried first and doesn't work: `.sr-only` sets
+   `position: absolute` on the anchor itself, which makes the anchor its own
+   `::after`'s containing block (a 1px-square clipped box) instead of letting
+   the ::after bubble up to `.widget-card`, so the "stretched" overlay was
+   really only ever 1px square, not clickable. Text is hidden with
+   `text-indent` instead, which doesn't touch `position` and so doesn't
+   interfere with this element being its own stretched hit target. */
+.widget-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 44px; align-items: stretch; }
+.widget-card {
+    position: relative;
+    display: flex; flex-direction: column; gap: 14px;
+    background: var(--surface); border-radius: 18px; box-shadow: var(--shadow);
+    padding: 20px 20px 18px; color: var(--ink);
+    transition: box-shadow 0.2s ease;
+}
+.widget-card:hover { box-shadow: var(--shadow), 0 0 0 2px color-mix(in srgb, var(--hub-color) 32%, transparent); }
+.widget-card-hitbox {
+    position: absolute; inset: 0;
+    text-indent: -9999px; overflow: hidden; white-space: nowrap;
+}
+.widget-card:has(.widget-card-hitbox:focus-visible) { box-shadow: var(--shadow), 0 0 0 2px var(--hub-color); }
+
+.widget-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.widget-head-title { display: flex; align-items: center; gap: 10px; }
+.widget-icon {
+    width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0;
+    background: color-mix(in srgb, var(--hub-color) 14%, var(--surface-alt));
+    color: var(--hub-color);
+    display: flex; align-items: center; justify-content: center;
+}
+.widget-card h3 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 15.5px; margin: 0; }
+.widget-arrow { color: var(--ink-faint); transition: transform 0.15s ease, color 0.15s ease; flex-shrink: 0; }
+.widget-card:hover .widget-arrow { transform: translate(2px, -2px); color: var(--hub-color); }
+
+.widget-body { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+
+/* itinerary widget */
+.widget-progress-label { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--ink-soft); }
+.widget-progress-label strong { font-family: "Space Mono", monospace; color: var(--ink); }
+.widget-progress-track { height: 5px; border-radius: 3px; background: var(--surface-alt); overflow: hidden; }
+.widget-progress-fill { height: 100%; background: var(--hub-color); border-radius: 3px; }
+.slot-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-top: 1px solid var(--line); }
+.slot-row:first-of-type { border-top: none; }
+.slot-row svg { flex-shrink: 0; color: var(--ink-faint); }
+.slot-row-name { flex: 1; min-width: 0; font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.status-pill { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; flex-shrink: 0; }
+.status-pill.locked { color: var(--success); background: color-mix(in srgb, var(--success) 16%, var(--surface-alt)); }
+.status-pill.proposed { color: var(--hub-color); background: color-mix(in srgb, var(--hub-color) 14%, var(--surface-alt)); }
+.status-pill.open { color: var(--ink-faint); background: var(--surface-alt); border: 1px dashed var(--line-strong); }
+
+/* expenses widget */
+.widget-stat { display: flex; align-items: baseline; gap: 6px; }
+.widget-stat-num { font-family: "Space Mono", monospace; font-weight: 700; font-size: 24px; }
+.widget-stat-label { font-size: 12px; color: var(--ink-faint); }
+.expense-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-top: 1px solid var(--line); }
+.expense-row:first-of-type { border-top: none; }
+.expense-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.expense-name { flex: 1; min-width: 0; font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.expense-amount { font-family: "Space Mono", monospace; font-size: 12px; font-weight: 700; color: var(--ink-soft); flex-shrink: 0; }
+
+/* settle up widget. The callout's background and border switch between a faint
+   green/red tint depending on which way the balance runs — kept very faint (3%)
+   specifically so "you owe" still reads calm rather than alarming; a solid red
+   fill was tried first and rejected for that reason. The direction badge and the
+   amount's own color carry the same distinction, so the signal shows up three
+   times without any single element being loud about it. */
+.balance-callout {
+    display: flex; align-items: center; gap: 12px;
+    border-radius: 12px; padding: 12px 14px;
+}
+.balance-callout.owed {
+    background: color-mix(in srgb, var(--success) 3%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--success) 20%, transparent);
+}
+.balance-callout.owe {
+    background: color-mix(in srgb, var(--danger) 3%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--danger) 20%, transparent);
+}
+.balance-direction {
+    width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+}
+.balance-direction.owed { background: color-mix(in srgb, var(--success) 16%, transparent); color: var(--success); }
+.balance-direction.owe { background: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger); }
+.balance-callout-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.balance-callout-label { font-size: 11px; color: var(--ink-soft); }
+.balance-callout-amount { font-family: "Space Mono", monospace; font-weight: 700; font-size: 20px; }
+.balance-callout-amount.owed { color: var(--success); }
+.balance-callout-amount.owe { color: var(--danger); }
+.flow-row { display: flex; align-items: center; gap: 8px; padding: 4px 2px; }
+.flow-av { width: 24px; height: 24px; border-radius: 50%; color: #fff; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: "Space Mono", monospace; font-size: 9px; font-weight: 700; }
+.flow-arrow { color: var(--ink-faint); flex-shrink: 0; }
+.flow-label { flex: 1; font-size: 12px; color: var(--ink-soft); }
+.flow-amount { font-family: "Space Mono", monospace; font-size: 12px; font-weight: 700; }
+
+/* widget empty states (no itinerary yet / no expenses yet / nothing to settle).
+   No button here on purpose: these cards are previews, not action panels, so
+   the whole-card hitbox link (see .widget-card-hitbox) is the only affordance,
+   for every state including this one. Sized generously since there's one less
+   element to fill the card. */
+.widget-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; flex: 1; justify-content: center; padding: 14px 6px; }
+.widget-empty-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: color-mix(in srgb, var(--hub-color) 14%, var(--surface-alt));
+    color: var(--hub-color);
+    display: flex; align-items: center; justify-content: center;
+}
+.widget-empty p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.55; max-width: 26ch; }
+.widget-empty .widget-empty-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+
+/* ---- Trip details: a full boarding-pass ticket, merged with the member manifest ---- */
+.boarding-pass {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 34px;
+}
+.boarding-pass-top { display: flex; }
+
+.pass-main { flex: 1; min-width: 0; padding: 26px 30px; display: flex; flex-direction: column; gap: 18px; }
+.pass-eyebrow {
+    font-family: "Space Mono", monospace; font-size: 10.5px; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin: 0;
+}
+.pass-title { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 24px; line-height: 1.15; margin: 0; text-wrap: balance; }
+
+.pass-route { display: flex; align-items: center; gap: 14px; }
+.pass-date { display: flex; flex-direction: column; gap: 2px; }
+.pass-date-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); font-weight: 700; }
+.pass-date-value { font-family: "Space Mono", monospace; font-size: 16px; font-weight: 700; color: var(--ink); }
+.pass-route-line { flex: 1; position: relative; height: 1px; background: var(--line-strong); min-width: 30px; }
+.pass-route-line svg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--ink-faint); background: var(--surface); padding: 0 4px; }
+
+.pass-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: auto; }
+
+/* shared tier meter: budget here, energy per member in the manifest below, so
+   both "how much" facts read the same way instead of one being text, one a bar */
+.tier-meter { display: inline-flex; align-items: center; gap: 8px; }
+.tier-caption {
+    font-family: "Space Mono", monospace; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint);
+}
+.tier-pips { display: flex; gap: 3px; }
+.tier-pip { width: 14px; height: 6px; border-radius: 3px; background: var(--line); }
+.tier-pip.filled { background: var(--ink-soft); }
+
+/* the die-cut perforation between the two coupons: a real 2px content-box column
+   (not a zero-width border trick) so the notches land exactly on-center */
+.pass-perf {
+    position: relative;
+    width: 2px;
+    flex-shrink: 0;
+    box-sizing: content-box;
+    background-image: linear-gradient(to bottom, var(--line-strong) 50%, transparent 50%);
+    background-size: 2px 10px;
+    background-repeat: repeat-y;
+}
+.pass-perf::before, .pass-perf::after {
+    content: ""; position: absolute; left: 50%; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--paper); transform: translateX(-50%);
+}
+.pass-perf::before { top: -11px; }
+.pass-perf::after { bottom: -11px; }
+
+.pass-stub {
+    width: 220px; flex-shrink: 0; background: var(--surface-alt);
+    padding: 26px 22px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;
+}
+.pass-stub-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); font-weight: 700; }
+.pass-stub-code {
+    font-family: "Space Mono", monospace; font-size: 21px; font-weight: 700; letter-spacing: 0.22em;
+    color: var(--accent); width: 100%;
+}
+.pass-stub-actions { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.copy-btn {
+    all: unset; width: 100%; box-sizing: border-box; text-align: center;
+    font-family: "Plus Jakarta Sans", sans-serif; font-size: 12px; font-weight: 700;
+    color: var(--ink-soft); background: var(--surface); border: 1px solid var(--line-strong);
+    border-radius: 999px; padding: 8px 12px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
+}
+.copy-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.copy-btn svg { flex-shrink: 0; }
+.copy-btn.copied { color: var(--success); border-color: var(--success); }
+
+@media (max-width: 620px) {
+    .boarding-pass-top { flex-direction: column; }
+    .pass-perf {
+        width: auto; height: 2px;
+        background-image: linear-gradient(to right, var(--line-strong) 50%, transparent 50%);
+        background-size: 10px 2px;
+        background-repeat: repeat-x;
+    }
+    .pass-perf::before, .pass-perf::after { top: 50%; left: auto; transform: translateY(-50%); }
+    .pass-perf::before { left: -11px; }
+    .pass-perf::after { right: -11px; left: auto; }
+    .pass-stub { width: auto; }
+}
+
+/* ---- Member manifest: merged into the same ticket, full-width so it stays
+   generous on a phone instead of squeezed into a coupon ---- */
+.pass-manifest-seam { position: relative; height: 0; border-top: 2px dashed var(--line-strong); }
+.pass-manifest-seam::before, .pass-manifest-seam::after {
+    content: ""; position: absolute; top: 50%; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--paper); transform: translateY(-50%);
+}
+.pass-manifest-seam::before { left: -11px; }
+.pass-manifest-seam::after { right: -11px; }
+
+.pass-manifest { padding: 22px 30px 26px; }
+.manifest-eyebrow {
+    font-family: "Space Mono", monospace; font-size: 10.5px; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px;
+}
+
+.manifest-row { display: flex; align-items: flex-start; gap: 14px; padding: 16px 0; border-top: 1px solid var(--line); }
+.manifest-row:first-of-type { border-top: none; padding-top: 2px; }
+.manifest-row:last-of-type { padding-bottom: 2px; }
+.manifest-avatar {
+    width: 38px; height: 38px; border-radius: 50%; color: #fff; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Space Mono", monospace; font-size: 13px; font-weight: 700;
+}
+.manifest-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.manifest-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.manifest-name { font-weight: 700; font-size: 14.5px; }
+.manifest-you-tag { font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 8px; }
+.manifest-interests { display: flex; flex-wrap: wrap; gap: 6px; }
+.interest-chip { font-size: 11.5px; font-weight: 600; color: var(--ink-soft); background: var(--surface-alt); border-radius: 999px; padding: 4px 10px; }
+.no-interests { font-size: 12px; color: var(--ink-faint); font-style: italic; }
+
+@media (max-width: 880px) {
+    .widget-grid { grid-template-columns: 1fr; }
+}

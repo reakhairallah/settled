@@ -5,21 +5,56 @@ document.addEventListener('DOMContentLoaded', () => {
     const itineraryError = document.getElementById('itinerary-error');
     const daysContainer = document.getElementById('days-container');
     const backLink = document.getElementById('back-link');
+    const generateButton = document.getElementById('generate-itinerary-button');
+    const generateMessage = document.getElementById('generate-itinerary-message');
     const blurbCache = {};
 
     backLink.href = 'trip-view.php?id=' + tripId;
 
-    axios.get('../../settled-server/api/itinerary-data-handler.php', { params: { trip_id: tripId } })
-        .then((response) => {
-            if (response.data.success) {
-                render_slots(response.data.data.slots);
-            } else {
-                itineraryError.textContent = response.data.error;
-            }
-        })
-        .catch((error) => {
-            itineraryError.textContent = extract_axios_error_message(error);
-        });
+    generateButton.addEventListener('click', () => {
+        generateMessage.textContent = '';
+        generateButton.disabled = true;
+
+        const formData = new FormData();
+        formData.append('trip_id', tripId);
+
+        axios.post('../../settled-server/api/generate-itinerary-handler.php', formData)
+            .then((response) => {
+                if (response.data.success) {
+                    generateButton.hidden = true;
+                    fetch_itinerary();
+                } else {
+                    generateMessage.textContent = response.data.error;
+                    generateButton.disabled = false;
+                }
+            })
+            .catch((error) => {
+                generateMessage.textContent = extract_axios_error_message(error);
+                generateButton.disabled = false;
+            });
+    });
+
+    function fetch_itinerary() {
+        axios.get('../../settled-server/api/itinerary-data-handler.php', { params: { trip_id: tripId } })
+            .then((response) => {
+                if (response.data.success) {
+                    daysContainer.innerHTML = '';
+                    if (response.data.data.slots.length === 0) {
+                        generateButton.hidden = false;
+                    } else {
+                        generateButton.hidden = true;
+                        render_slots(response.data.data.slots);
+                    }
+                } else {
+                    itineraryError.textContent = response.data.error;
+                }
+            })
+            .catch((error) => {
+                itineraryError.textContent = extract_axios_error_message(error);
+            });
+    }
+
+    fetch_itinerary();
 
     function render_slots(slots) {
         const days = {};

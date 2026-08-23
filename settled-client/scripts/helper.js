@@ -29,6 +29,12 @@ function redirect_if_logged_in(redirect_url) {
 
 const VIBE_COLORS = ['#EC5A96', '#3E8EF7', '#F5B830', '#34C471', '#FF8A3D'];
 
+function format_date(dateStr) {
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return { month: months[m - 1], day: String(d).padStart(2, '0'), year: String(y) };
+}
+
 function color_for_initials(initials) {
     let sum = 0;
     for (const ch of initials) sum += ch.charCodeAt(0);
