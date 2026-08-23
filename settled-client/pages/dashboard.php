@@ -7,6 +7,7 @@ include("../../settled-server/auth_check.php");
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Trips — Settled</title>
 <link rel="stylesheet" href="../styles/base.css">
 <link rel="stylesheet" href="../styles/dashboard.css">
