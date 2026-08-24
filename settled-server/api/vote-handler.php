@@ -59,11 +59,28 @@ if($slot["status"] == "open") {
     exit;
 }
 
-$sql = "INSERT INTO votes(slot_id, trip_member_id, vote) VALUES(?, ?, ?)
-        ON DUPLICATE KEY UPDATE vote = VALUES(vote)";
+$sql = "SELECT vote FROM votes WHERE slot_id = ? AND trip_member_id = ?";
 $query = $mysql->prepare($sql);
-$query->bind_param("iis", $slot_id, $trip_member_id, $vote);
+$query->bind_param("ii", $slot_id, $trip_member_id);
 $query->execute();
+$array = $query->get_result();
+$existing_vote = $array->fetch_assoc();
+
+$vote_removed = false;
+
+if($existing_vote != null && $existing_vote["vote"] == $vote) {
+    $sql = "DELETE FROM votes WHERE slot_id = ? AND trip_member_id = ?";
+    $query = $mysql->prepare($sql);
+    $query->bind_param("ii", $slot_id, $trip_member_id);
+    $query->execute();
+    $vote_removed = true;
+} else {
+    $sql = "INSERT INTO votes(slot_id, trip_member_id, vote) VALUES(?, ?, ?)
+            ON DUPLICATE KEY UPDATE vote = VALUES(vote)";
+    $query = $mysql->prepare($sql);
+    $query->bind_param("iis", $slot_id, $trip_member_id, $vote);
+    $query->execute();
+}
 
 $sql = "SELECT
             SUM(vote = 'up') AS up_count,
@@ -149,7 +166,7 @@ if($votes_cleared) {
     $down_count = 0;
     $your_vote = null;
 } else {
-    $your_vote = $vote;
+    $your_vote = $vote_removed ? null : $vote;
 }
 
 $sql = "SELECT itinerary_slots.activity_id, activities.name, activities.category, activities.cost_tier

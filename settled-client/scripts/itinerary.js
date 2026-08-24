@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const LOCK_ICON = '<rect x="4" y="10.5" width="16" height="10" rx="2.2"/><path d="M7.5 10.5V8a4.5 4.5 0 0 1 9 0v2.5"/>';
     const PLUS_ICON = '<path d="M12 5v14M5 12h14"/>';
+    const INFO_ICON = '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>';
     const VOTE_UP_ICON = '<path d="M7 22V11M2 13v7a2 2 0 0 0 2 2h11.5a2 2 0 0 0 2-1.6l1.4-7A2 2 0 0 0 17 11h-4.7l.9-4.5a1.8 1.8 0 0 0-3.2-1.5L7 11"/>';
     const VOTE_DOWN_ICON = '<path d="M17 2v11M22 11V4a2 2 0 0 0-2-2H8.5a2 2 0 0 0-2 1.6L5 10.6A2 2 0 0 0 7 13h4.7l-.9 4.5a1.8 1.8 0 0 0 3.2 1.5L17 13"/>';
     const SPARKLE_PATHS = [
@@ -351,6 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (blurbCache[slot.id]) {
                 blurbText.textContent = blurbCache[slot.id];
+                blurbWrap.classList.add('loaded');
                 return;
             }
             axios.get('../../settled-server/api/why-this-pick-handler.php', { params: { slot_id: slot.id } })
@@ -361,9 +363,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         blurbText.textContent = response.data.error;
                     }
+                    blurbWrap.classList.add('loaded');
                 })
                 .catch((error) => {
                     blurbText.textContent = extract_axios_error_message(error);
+                    blurbWrap.classList.add('loaded');
                 });
         });
 
@@ -534,9 +538,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (candidates.length === 0) {
             const empty = el('p', 'assign-empty');
-            empty.textContent = 'No activities match this trip\'s budget and category mix right now.';
+            empty.textContent = 'No activities are left for this slot, in or out of budget.';
             assignList.appendChild(empty);
             return;
+        }
+
+        // the backend only widens past the trip's budget tier once nothing
+        // in-budget is left, and it does so for every candidate at once, so
+        // checking the first one tells us whether we're in that fallback
+        if (candidates[0].over_budget) {
+            const note = el('div', 'trip-preview-banner');
+            note.appendChild(icon_svg(INFO_ICON, 16, 16, '2.2'));
+            note.appendChild(document.createTextNode('Nothing left in this trip\'s budget for this slot. Showing options over budget instead.'));
+            assignList.appendChild(note);
         }
 
         const categories = [];
@@ -599,6 +613,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const budget = el('span', 'budget-pill');
         budget.textContent = '$'.repeat(candidate.cost_tier);
         tags.append(category, budget);
+        if (candidate.over_budget) {
+            const overBudgetTag = el('span', 'over-budget-tag');
+            overBudgetTag.textContent = 'Over budget';
+            tags.appendChild(overBudgetTag);
+        }
 
         main.append(nameRow, tags);
 

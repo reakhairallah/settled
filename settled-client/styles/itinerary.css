@@ -178,10 +178,13 @@
 .why-btn:hover { background: color-mix(in srgb, var(--accent) 18%, var(--surface-alt)); }
 /* open state: the button loses its pill shape and squares off at the bottom
    so it reads as the lid of the panel below it, not a separate control that
-   happens to sit above one. A slow shine only plays on whichever button is
-   actually open right now, never at rest, never on every card at once, so
-   it stays a quiet "this is live" cue rather than an overwhelming one. */
-.why-toggle:checked ~ .card-foot .why-btn { border-radius: 12px 12px 0 0; }
+   happens to sit above one. That squared bottom is only correct once the
+   panel is actually there to sit under it (:has(~ .why-blurb.loaded)), the
+   blurb stays collapsed while the fetch is in flight, so during that window
+   the button has nothing to connect to and stays a plain pill. The shine,
+   below, plays for the whole open state either way, since it's the loading
+   cue itself, not something waiting on content to make sense. */
+.why-toggle:checked:has(~ .why-blurb.loaded) ~ .card-foot .why-btn { border-radius: 12px 12px 0 0; }
 .why-toggle:checked ~ .card-foot .why-btn::after {
     content: ""; position: absolute; inset: 0; pointer-events: none;
     background: linear-gradient(110deg, transparent 35%, color-mix(in srgb, var(--accent) 22%, transparent) 50%, transparent 65%);
@@ -196,8 +199,13 @@
    (mirrored to the button, which sits on the right of its row) and a -1px
    overlap removes any hairline seam, so it reads as fused to the button,
    not just parked somewhere near the vote row above it. */
+/* the panel only expands once it actually has text in it (.loaded, set by
+   JS after the fetch resolves). Opening the toggle alone still lets the
+   button show its "in progress" open/shine state immediately, but the box
+   itself stays collapsed rather than popping open empty while the request
+   is in flight. */
 .why-blurb { max-height: 0; opacity: 0; overflow: hidden; transition: max-height .35s cubic-bezier(.22,1,.36,1), opacity .25s ease; }
-.why-toggle:checked ~ .why-blurb { max-height: 220px; opacity: 1; }
+.why-toggle:checked ~ .why-blurb.loaded { max-height: 220px; opacity: 1; }
 .why-blurb-inner {
     margin-top: -1px; padding: 12px 14px; border-radius: 12px 0 12px 12px;
     font-size: 12.5px; line-height: 1.6; color: var(--ink-soft);
@@ -257,6 +265,10 @@
 .assign-option-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .assign-option-name { font-weight: 700; font-size: 13.5px; color: var(--ink); }
 .match-badge { font-family: "Space Mono", monospace; font-size: 9.5px; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 7px; }
+/* neutral, not alarm-colored: going over budget here is an expected
+   last-resort fallback, not an error state, so it stays the same quiet
+   outlined treatment as the budget pill rather than reaching for danger */
+.over-budget-tag { font-size: 11.5px; font-weight: 600; color: var(--ink-faint); background: var(--surface-alt); border: 1px dashed var(--line-strong); border-radius: 999px; padding: 3px 9px; }
 .assign-option-tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .assign-radio-dot { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--line-strong); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .assign-option:has(input:checked) .assign-radio-dot { border-color: var(--accent); }

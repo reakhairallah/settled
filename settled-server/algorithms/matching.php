@@ -138,6 +138,12 @@ function get_candidate_activities_for_slot($mysql, $trip_id, $time_of_day) {
     }
 
     $activities = get_filtered_activities($mysql, $budget_tier, $time_of_day, $excluded_activity_ids);
+    $over_budget = false;
+
+    if(count($activities) == 0) {
+        $activities = get_filtered_activities($mysql, 3, $time_of_day, $excluded_activity_ids);
+        $over_budget = true;
+    }
 
     $candidates = [];
     foreach($activities as $row) {
@@ -147,6 +153,7 @@ function get_candidate_activities_for_slot($mysql, $trip_id, $time_of_day) {
         $candidate["category"] = $row["category"];
         $candidate["cost_tier"] = $row["cost_tier"];
         $candidate["interest_match_count"] = $interest_counts[$row["category"]] ?? 0;
+        $candidate["over_budget"] = $over_budget;
         $candidates[] = $candidate;
     }
 
