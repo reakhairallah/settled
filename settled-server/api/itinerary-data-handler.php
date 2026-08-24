@@ -30,6 +30,21 @@ if($trip_member == null) {
     exit;
 }
 
+$sql = "SELECT name, start_date, budget_tier FROM trips WHERE id = ?";
+$query = $mysql->prepare($sql);
+$query->bind_param("i", $trip_id);
+$query->execute();
+$array = $query->get_result();
+$trip = $array->fetch_assoc();
+
+$sql = "SELECT COUNT(*) AS total FROM trip_members WHERE trip_id = ?";
+$query = $mysql->prepare($sql);
+$query->bind_param("i", $trip_id);
+$query->execute();
+$array = $query->get_result();
+$row = $array->fetch_assoc();
+$member_count = (int)$row["total"];
+
 $sql = "SELECT itinerary_slots.id, itinerary_slots.day_number, itinerary_slots.time_of_day, itinerary_slots.status,
                activities.name, activities.category, activities.cost_tier
         FROM itinerary_slots
@@ -63,6 +78,8 @@ while($row = $array->fetch_assoc()) {
 }
 
 $data = [];
+$data["trip"] = $trip;
+$data["member_count"] = $member_count;
 $data["slots"] = $slots;
 echo json_encode(["success" => true, "data" => $data]);
 

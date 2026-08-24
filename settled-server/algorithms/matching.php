@@ -31,6 +31,34 @@ function get_trip_energy_and_interests($mysql, $trip_id) {
     return $result;
 }
 
+function get_filtered_activities($mysql, $budget_tier, $time_of_day, $excluded_activity_ids) {
+    $sql = "SELECT id, name, category, energy_level, time_of_day, cost_tier, description FROM activities WHERE cost_tier <= ? AND time_of_day = ?";
+    $types = "is";
+    $params = [$budget_tier, $time_of_day];
+
+    if(count($excluded_activity_ids) > 0) {
+        $placeholders = implode(",", array_fill(0, count($excluded_activity_ids), "?"));
+        $sql .= " AND id NOT IN ($placeholders)";
+        $types .= str_repeat("i", count($excluded_activity_ids));
+        foreach($excluded_activity_ids as $excluded_id) {
+            $params[] = (int)$excluded_id;
+        }
+    }
+
+    $sql .= " ORDER BY id ASC";
+
+    $query = $mysql->prepare($sql);
+    $query->bind_param($types, ...$params);
+    $query->execute();
+    $array = $query->get_result();
+
+    $activities = [];
+    while($row = $array->fetch_assoc()) {
+        $activities[] = $row;
+    }
+    return $activities;
+}
+
 function match_activity_for_slot($mysql, $trip_id, $time_of_day, $excluded_activity_ids) {
     $sql = "SELECT budget_tier FROM trips WHERE id = ?";
     $query = $mysql->prepare($sql);
@@ -54,30 +82,12 @@ function match_activity_for_slot($mysql, $trip_id, $time_of_day, $excluded_activ
     $target_energy = $trip_data["target_energy"];
     $interest_counts = $trip_data["interest_counts"];
 
-    $sql = "SELECT id, name, category, energy_level, time_of_day, cost_tier, description FROM activities WHERE cost_tier <= ? AND time_of_day = ?";
-    $types = "is";
-    $params = [$budget_tier, $time_of_day];
-
-    if(count($excluded_activity_ids) > 0) {
-        $placeholders = implode(",", array_fill(0, count($excluded_activity_ids), "?"));
-        $sql .= " AND id NOT IN ($placeholders)";
-        $types .= str_repeat("i", count($excluded_activity_ids));
-        foreach($excluded_activity_ids as $excluded_id) {
-            $params[] = (int)$excluded_id;
-        }
-    }
-
-    $sql .= " ORDER BY id ASC";
-
-    $query = $mysql->prepare($sql);
-    $query->bind_param($types, ...$params);
-    $query->execute();
-    $array = $query->get_result();
+    $activities = get_filtered_activities($mysql, $budget_tier, $time_of_day, $excluded_activity_ids);
 
     $best_activity = null;
     $best_score = null;
 
-    while($row = $array->fetch_assoc()) {
+    foreach($activities as $row) {
         $energy_diff = abs($target_energy - $row["energy_level"]);
 
         if($energy_diff == 0) {
@@ -98,6 +108,56 @@ function match_activity_for_slot($mysql, $trip_id, $time_of_day, $excluded_activ
     }
 
     return $best_activity;
+}
+
+function get_candidate_activities_for_slot($mysql, $trip_id, $time_of_day) {
+    $sql = "SELECT budget_tier FROM trips WHERE id = ?";
+    $query = $mysql->prepare($sql);
+    $query->bind_param("i", $trip_id);
+    $query->execute();
+    $array = $query->get_result();
+    $trip = $array->fetch_assoc();
+
+    if($trip == null) {
+        return [];
+    }
+
+    $budget_tier = $trip["budget_tier"];
+
+    $trip_data = get_trip_energy_and_interests($mysql, $trip_id);
+    $interest_counts = $trip_data != null ? $trip_data["interest_counts"] : [];
+
+    $sql = "SELECT activity_id FROM itinerary_slots WHERE trip_id = ? AND activity_id IS NOT NULL";
+    $query = $mysql->prepare($sql);
+    $query->bind_param("i", $trip_id);
+    $query->execute();
+    $array = $query->get_result();
+    $excluded_activity_ids = [];
+    while($row = $array->fetch_assoc()) {
+        $excluded_activity_ids[] = $row["activity_id"];
+    }
+
+    $activities = get_filtered_activities($mysql, $budget_tier, $time_of_day, $excluded_activity_ids);
+
+    $candidates = [];
+    foreach($activities as $row) {
+        $candidate = [];
+        $candidate["id"] = $row["id"];
+        $candidate["name"] = $row["name"];
+        $candidate["category"] = $row["category"];
+        $candidate["cost_tier"] = $row["cost_tier"];
+        $candidate["interest_match_count"] = $interest_counts[$row["category"]] ?? 0;
+        $candidates[] = $candidate;
+    }
+
+    usort($candidates, function($a, $b) {
+        if($a["interest_match_count"] != $b["interest_match_count"]) {
+            return $b["interest_match_count"] - $a["interest_match_count"];
+        }
+        return $a["id"] - $b["id"];
+    });
+
+    return $candidates;
 }
 
 ?>
