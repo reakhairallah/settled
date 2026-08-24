@@ -468,7 +468,17 @@ body {
 }
 
 .modal-panel {
-    position: relative;
+    /* position: fixed; inset: 0; margin: auto is what actually centers a
+       native <dialog> in the current viewport regardless of scroll
+       position. The previous position: relative here was an author-CSS
+       override that silently beat the browser's own default centering for
+       dialog:modal, so the panel rendered at its normal position in the
+       document instead, invisible on dashboard/trip-view since their
+       modal triggers live in the top bar (page always at scroll 0 when
+       opened), but very visible once a trigger can be anywhere on a long
+       scrollable page, like itinerary's assign-activity cards. */
+    position: fixed;
+    inset: 0;
     width: 440px;
     max-width: calc(100vw - 40px);
     max-height: 88vh;

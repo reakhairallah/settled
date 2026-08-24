@@ -253,8 +253,16 @@
 .assign-search::placeholder { color: var(--ink-faint); }
 
 .assign-filters { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 12px; }
-.assign-filters label { flex-shrink: 0; position: relative; }
-.assign-filters input { position: absolute; opacity: 0; pointer-events: none; }
+/* display:inline-flex, not the default inline, matters here: inset:0 on the
+   absolutely-positioned input only sizes reliably against an ancestor with
+   a real box, which a plain inline label doesn't give it. */
+.assign-filters label { display: inline-flex; flex-shrink: 0; position: relative; }
+/* the input sits directly over its chip (inset: 0, no pointer-events:none)
+   so the click lands on the real control itself, same as .assign-option and
+   base.css's .chip-option, not relying on label-click-forwarding to an
+   invisible, unsized, pointer-events:none input, which is what this was
+   doing before and why the chips didn't respond to clicks. */
+.assign-filters input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
 .filter-chip { display: inline-flex; font-size: 12px; font-weight: 600; color: var(--ink-soft); background: var(--surface-alt); border: 1px solid transparent; border-radius: 999px; padding: 6px 12px; cursor: pointer; white-space: nowrap; transition: background .15s ease, color .15s ease; }
 .assign-filters input:checked + .filter-chip { background: var(--accent-soft); color: var(--accent); }
 
@@ -268,10 +276,6 @@
 .assign-option-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .assign-option-name { font-weight: 700; font-size: 13.5px; color: var(--ink); }
 .match-badge { font-family: "Space Mono", monospace; font-size: 9.5px; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 7px; }
-/* neutral, not alarm-colored: going over budget here is an expected
-   last-resort fallback, not an error state, so it stays the same quiet
-   outlined treatment as the budget pill rather than reaching for danger */
-.over-budget-tag { font-size: 11.5px; font-weight: 600; color: var(--ink-faint); background: var(--surface-alt); border: 1px dashed var(--line-strong); border-radius: 999px; padding: 3px 9px; }
 .assign-option-tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .assign-radio-dot { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--line-strong); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .assign-option:has(input:checked) .assign-radio-dot { border-color: var(--accent); }

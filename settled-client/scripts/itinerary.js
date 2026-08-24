@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const generateButton = document.getElementById('generate-itinerary-button');
     const generateMessage = document.getElementById('generate-itinerary-message');
     const generateIcon = document.getElementById('generate-itinerary-icon');
-    const generateLabel = document.getElementById('generate-itinerary-label');
     const itineraryTimeline = document.getElementById('itinerary-timeline');
     const progressCount = document.getElementById('progress-count');
     const progressFill = document.getElementById('progress-fill');
@@ -113,10 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const spinner = icon_svg(SPINNER_ICON, 15, 15, '2.4');
             spinner.classList.add('spin-icon');
             generateIcon.appendChild(spinner);
-            generateLabel.textContent = 'Generating your itinerary…';
         } else {
             generateIcon.appendChild(icon_svg(PLUS_ICON, 15, 15, '2.4'));
-            generateLabel.textContent = 'Generate itinerary';
         }
     }
 
@@ -125,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // holds the loading state up to a floor of MIN_LOADING_MS regardless of
     // how quickly the server actually responds (never adds delay beyond
     // that floor if the request itself already took longer)
-    const MIN_LOADING_MS = 800;
+    const MIN_LOADING_MS = 1000;
 
     generateButton.addEventListener('click', () => {
         generateMessage.textContent = '';
@@ -509,6 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         update_progress();
+        return newRow;
     }
 
     // ---- Assign-activity modal ----
@@ -589,19 +587,10 @@ document.addEventListener('DOMContentLoaded', () => {
             assignList.appendChild(note);
         }
 
-        const categories = [];
-        candidates.forEach((candidate) => {
-            if (!categories.includes(candidate.category)) {
-                categories.push(candidate.category);
-            }
-        });
-
-        const allChip = build_filter_chip('All', '', true);
-        assignFilters.appendChild(allChip);
-        categories.forEach((category) => {
-            assignFilters.appendChild(build_filter_chip(category, category, false));
-        });
-
+        // category filter chips are parked for now (not rendered), since
+        // click handling never worked reliably and search alone still
+        // covers narrowing the list; see design.md's itinerary gotchas for
+        // what was actually tried
         candidates.forEach((candidate, index) => {
             assignList.appendChild(build_assign_option(candidate, index === 0));
         });
@@ -649,11 +638,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const budget = el('span', 'budget-pill');
         budget.textContent = '$'.repeat(candidate.cost_tier);
         tags.append(category, budget);
-        if (candidate.over_budget) {
-            const overBudgetTag = el('span', 'over-budget-tag');
-            overBudgetTag.textContent = 'Over budget';
-            tags.appendChild(overBudgetTag);
-        }
 
         main.append(nameRow, tags);
 
@@ -680,8 +664,9 @@ document.addEventListener('DOMContentLoaded', () => {
         axios.post('../../settled-server/api/assign-slot-handler.php', formData)
             .then((response) => {
                 if (response.data.success) {
-                    apply_slot_update(currentAssignSlotId, response.data.data);
+                    const newRow = apply_slot_update(currentAssignSlotId, response.data.data);
                     close_modal();
+                    newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 } else {
                     assignError.textContent = response.data.error;
                 }
