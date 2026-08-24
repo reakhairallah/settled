@@ -46,10 +46,13 @@ $row = $array->fetch_assoc();
 $member_count = (int)$row["total"];
 
 $sql = "SELECT itinerary_slots.id, itinerary_slots.day_number, itinerary_slots.time_of_day, itinerary_slots.status,
-               activities.name, activities.category, activities.cost_tier
+               activities.name, activities.category, activities.cost_tier,
+               SUM(votes.vote = 'up') AS up_count, SUM(votes.vote = 'down') AS down_count
         FROM itinerary_slots
         LEFT JOIN activities ON activities.id = itinerary_slots.activity_id
+        LEFT JOIN votes ON votes.slot_id = itinerary_slots.id
         WHERE itinerary_slots.trip_id = ?
+        GROUP BY itinerary_slots.id
         ORDER BY itinerary_slots.day_number, FIELD(itinerary_slots.time_of_day, 'morning', 'afternoon', 'evening')";
 $query = $mysql->prepare($sql);
 $query->bind_param("i", $trip_id);
@@ -63,6 +66,8 @@ while($row = $array->fetch_assoc()) {
     $slot["day_number"] = $row["day_number"];
     $slot["time_of_day"] = $row["time_of_day"];
     $slot["status"] = $row["status"];
+    $slot["up_count"] = (int)$row["up_count"];
+    $slot["down_count"] = (int)$row["down_count"];
 
     if($row["name"] != null) {
         $activity = [];

@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const itineraryEmpty = document.getElementById('itinerary-empty');
     const generateButton = document.getElementById('generate-itinerary-button');
     const generateMessage = document.getElementById('generate-itinerary-message');
-    const itinerarySummary = document.getElementById('itinerary-summary');
+    const itineraryTimeline = document.getElementById('itinerary-timeline');
     const progressCount = document.getElementById('progress-count');
     const progressFill = document.getElementById('progress-fill');
     const dayNav = document.getElementById('day-nav');
@@ -52,14 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
         'M18 3.2c.2 1.2.5 2 .9 2.4.4.4 1.2.7 2.4.9-1.2.2-2 .5-2.4.9-.4.4-.7 1.2-.9 2.4-.2-1.2-.5-2-.9-2.4-.4-.4-1.2-.7-2.4-.9 1.2-.2 2-.5 2.4-.9.4-.4.7-1.2.9-2.4z'
     ];
 
-    function icon_svg(pathData, width, height) {
+    function icon_svg(pathData, width, height, strokeWidth) {
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('width', width);
         svg.setAttribute('height', height);
         svg.setAttribute('viewBox', '0 0 24 24');
         svg.setAttribute('fill', 'none');
         svg.setAttribute('stroke', 'currentColor');
-        svg.setAttribute('stroke-width', '2.4');
+        svg.setAttribute('stroke-width', strokeWidth || '2.4');
         svg.setAttribute('stroke-linecap', 'round');
         svg.setAttribute('stroke-linejoin', 'round');
         svg.innerHTML = pathData;
@@ -96,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let tripStartDate = null;
+    let memberCount = 0;
     const slotsById = {};
     const blurbCache = {};
     let currentAssignSlotId = null;
@@ -131,14 +132,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     const data = response.data.data;
                     tripPillName.textContent = data.trip.name;
                     tripStartDate = data.trip.start_date;
+                    memberCount = data.member_count;
 
                     if (data.slots.length === 0) {
                         itineraryEmpty.hidden = false;
-                        itinerarySummary.hidden = true;
+                        itineraryTimeline.hidden = true;
                         daysContainer.textContent = '';
                     } else {
                         itineraryEmpty.hidden = true;
-                        itinerarySummary.hidden = false;
+                        itineraryTimeline.hidden = false;
                         render_timeline(data.slots);
                     }
                 } else {
@@ -240,7 +242,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const node = el('div', 'time-node');
         const dot = el('div', 'time-node-dot');
-        dot.innerHTML = TIME_OF_DAY_ICON[slot.time_of_day];
+        // must be a real <svg> element (not raw path/line tags dropped into a
+        // plain div's innerHTML), since the browser only parses those tags as SVG
+        // when the innerHTML target is itself in the SVG namespace
+        dot.appendChild(icon_svg(TIME_OF_DAY_ICON[slot.time_of_day], 16, 16, '2.2'));
         node.appendChild(dot);
         row.appendChild(node);
 
@@ -368,19 +373,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function build_vote_group(slot) {
         const group = el('div', 'vote-group');
+        const upCount = slot.up_count || 0;
+        const downCount = slot.down_count || 0;
 
         const buttons = el('div', 'vote-buttons');
         const upBtn = document.createElement('button');
         upBtn.type = 'button';
-        upBtn.className = 'vote-btn up';
+        upBtn.className = 'vote-btn up' + (slot.your_vote === 'up' ? ' voted' : '');
         upBtn.appendChild(icon_svg(VOTE_UP_ICON, 12, 12));
+        upBtn.appendChild(document.createTextNode(String(upCount)));
         const downBtn = document.createElement('button');
         downBtn.type = 'button';
-        downBtn.className = 'vote-btn down';
+        downBtn.className = 'vote-btn down' + (slot.your_vote === 'down' ? ' voted' : '');
         downBtn.appendChild(icon_svg(VOTE_DOWN_ICON, 12, 12));
+        downBtn.appendChild(document.createTextNode(String(downCount)));
         buttons.append(upBtn, downBtn);
 
         const meta = el('span', 'vote-meta');
+        const metaCount = document.createElement('strong');
+        metaCount.textContent = String(upCount + downCount);
+        meta.append(metaCount, document.createTextNode('/' + memberCount + ' voted'));
 
         group.append(buttons, meta);
 
@@ -443,6 +455,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         previous.status = update.status;
         previous.activity = update.activity;
+        // the assign-slot response doesn't carry vote fields at all (a
+        // freshly assigned slot has no votes yet), so default them rather
+        // than leaving stale numbers from before the activity changed
+        previous.up_count = update.up_count || 0;
+        previous.down_count = update.down_count || 0;
+        previous.your_vote = update.your_vote || null;
 
         const oldRow = daysContainer.querySelector('.slot-row[data-slot-id="' + slotId + '"]');
         const newRow = build_slot_row(previous);

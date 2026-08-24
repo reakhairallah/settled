@@ -56,13 +56,12 @@ include("../../settled-server/auth_check.php");
     </button>
 </div>
 
-<div class="itinerary-summary" id="itinerary-summary" hidden>
+<div id="itinerary-timeline" hidden>
     <div class="progress-row"><span>Locked in</span><strong id="progress-count"></strong></div>
     <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
     <div class="day-nav" id="day-nav"></div>
+    <div id="days-container"></div>
 </div>
-
-<div id="days-container"></div>
 
 </div>
 
