@@ -193,7 +193,6 @@
     background: color-mix(in srgb, var(--accent) 6%, var(--surface-alt));
 }
 .why-blurb-inner p { margin: 0; }
-.why-blurb-inner .fallback-tag { display: block; margin-top: 6px; font-size: 10.5px; color: var(--ink-faint); font-style: italic; }
 
 /* ---- responsive: collapse the sticky date rail into an inline strip ---- */
 @media (max-width: 560px) {
