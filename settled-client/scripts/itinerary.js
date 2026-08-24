@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const itineraryEmpty = document.getElementById('itinerary-empty');
     const generateButton = document.getElementById('generate-itinerary-button');
     const generateMessage = document.getElementById('generate-itinerary-message');
+    const generateIcon = document.getElementById('generate-itinerary-icon');
+    const generateLabel = document.getElementById('generate-itinerary-label');
     const itineraryTimeline = document.getElementById('itinerary-timeline');
     const progressCount = document.getElementById('progress-count');
     const progressFill = document.getElementById('progress-fill');
@@ -46,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const LOCK_ICON = '<rect x="4" y="10.5" width="16" height="10" rx="2.2"/><path d="M7.5 10.5V8a4.5 4.5 0 0 1 9 0v2.5"/>';
     const PLUS_ICON = '<path d="M12 5v14M5 12h14"/>';
     const INFO_ICON = '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>';
+    const SPINNER_ICON = '<circle cx="12" cy="12" r="9" stroke-dasharray="40 16"/>';
     const VOTE_UP_ICON = '<path d="M7 22V11M2 13v7a2 2 0 0 0 2 2h11.5a2 2 0 0 0 2-1.6l1.4-7A2 2 0 0 0 17 11h-4.7l.9-4.5a1.8 1.8 0 0 0-3.2-1.5L7 11"/>';
     const VOTE_DOWN_ICON = '<path d="M17 2v11M22 11V4a2 2 0 0 0-2-2H8.5a2 2 0 0 0-2 1.6L5 10.6A2 2 0 0 0 7 13h4.7l-.9 4.5a1.8 1.8 0 0 0 3.2 1.5L17 13"/>';
     const SPARKLE_PATHS = [
@@ -104,9 +107,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetch_itinerary();
 
+    function set_generate_button_loading(loading) {
+        generateIcon.textContent = '';
+        if (loading) {
+            const spinner = icon_svg(SPINNER_ICON, 15, 15, '2.4');
+            spinner.classList.add('spin-icon');
+            generateIcon.appendChild(spinner);
+            generateLabel.textContent = 'Generating your itinerary…';
+        } else {
+            generateIcon.appendChild(icon_svg(PLUS_ICON, 15, 15, '2.4'));
+            generateLabel.textContent = 'Generate itinerary';
+        }
+    }
+
+    // real generation is often fast enough that the spinner would otherwise
+    // flash and disappear before it registers as "loading" at all, so this
+    // holds the loading state up to a floor of MIN_LOADING_MS regardless of
+    // how quickly the server actually responds (never adds delay beyond
+    // that floor if the request itself already took longer)
+    const MIN_LOADING_MS = 800;
+
     generateButton.addEventListener('click', () => {
         generateMessage.textContent = '';
         generateButton.disabled = true;
+        set_generate_button_loading(true);
+
+        const startTime = Date.now();
+        function after_min_delay(callback) {
+            const remaining = MIN_LOADING_MS - (Date.now() - startTime);
+            setTimeout(callback, Math.max(0, remaining));
+        }
 
         const formData = new FormData();
         formData.append('trip_id', tripId);
@@ -114,15 +144,21 @@ document.addEventListener('DOMContentLoaded', () => {
         axios.post('../../settled-server/api/generate-itinerary-handler.php', formData)
             .then((response) => {
                 if (response.data.success) {
-                    fetch_itinerary();
+                    after_min_delay(fetch_itinerary);
                 } else {
-                    generateMessage.textContent = response.data.error;
-                    generateButton.disabled = false;
+                    after_min_delay(() => {
+                        generateMessage.textContent = response.data.error;
+                        generateButton.disabled = false;
+                        set_generate_button_loading(false);
+                    });
                 }
             })
             .catch((error) => {
-                generateMessage.textContent = extract_axios_error_message(error);
-                generateButton.disabled = false;
+                after_min_delay(() => {
+                    generateMessage.textContent = extract_axios_error_message(error);
+                    generateButton.disabled = false;
+                    set_generate_button_loading(false);
+                });
             });
     });
 

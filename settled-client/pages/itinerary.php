@@ -51,8 +51,8 @@ include("../../settled-server/auth_check.php");
     <h2>No itinerary yet</h2>
     <p id="generate-itinerary-message">Once everyone's set their energy and interests, generate a day-by-day plan the whole group can vote on.</p>
     <button class="btn btn-soft" id="generate-itinerary-button" type="button">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/></svg>
-        Generate itinerary
+        <span id="generate-itinerary-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/></svg></span>
+        <span id="generate-itinerary-label">Generate itinerary</span>
     </button>
 </div>
 

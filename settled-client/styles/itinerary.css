@@ -33,7 +33,7 @@
    hidden attribute set (the empty state and the real timeline showing at
    the same time). */
 .itinerary-empty[hidden] { display: none; }
-.itinerary-empty-icon { width: 52px; height: 52px; border-radius: 14px; background: color-mix(in srgb, #EC5A96 14%, var(--surface-alt)); color: #EC5A96; display: flex; align-items: center; justify-content: center; }
+.itinerary-empty-icon { width: 52px; height: 52px; border-radius: 14px; background: color-mix(in srgb, var(--accent) 14%, var(--surface-alt)); color: var(--accent); display: flex; align-items: center; justify-content: center; }
 .itinerary-empty h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 21px; margin: 0; }
 .itinerary-empty p { margin: 0; font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; max-width: 34ch; }
 
@@ -41,6 +41,9 @@
    gradient primary button, so this one page doesn't lean as hard on accent */
 .btn-soft { background: var(--accent-soft); color: var(--accent); margin-top: 6px; }
 .btn-soft:hover { background: color-mix(in srgb, var(--accent) 20%, var(--accent-soft)); }
+
+.spin-icon { animation: spin 0.8s linear infinite; transform-origin: 50% 50%; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* ---- trip progress + jump-to-day nav ---- */
 /* #day-nav lives inside this same wrapper as #days-container (not in a
