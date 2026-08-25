@@ -1,0 +1,160 @@
+/* ---- Add-expense card: a real part of the page, not a modal and not a hero.
+   This is the thing people actually came here to do, so it sits right under
+   the page title with its fields laid out inline. ---- */
+.add-expense-card { background: var(--surface); border-radius: 18px; box-shadow: var(--shadow); padding: 22px 24px; margin-bottom: 34px; }
+.add-expense-head { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+
+/* Light accent tint, the same pairing as .widget-icon and every chip's
+   selected state -- not the flat hub-blue this started as, since this page
+   isn't the widget it's expanding from. */
+.add-expense-icon {
+    width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0;
+    background: var(--accent-soft); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+}
+.add-expense-head h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 16.5px; margin: 0; }
+
+/* Overrides base.css's shared .field-row (an even 1fr/1fr split, built for the
+   create-trip modal's start/end date pair) -- amount only needs a narrow
+   column, description gets the rest. Scoped to this card so the shared
+   default stays untouched everywhere else. */
+.add-expense-card .field-row { grid-template-columns: 160px 1fr; }
+
+/* Rebuilt as a flex row instead of an absolutely-positioned $ over the input:
+   the wrapper is the bordered box, the $ is a plain flex sibling, and the
+   <input> inside is borderless/transparent and just fills the rest. Two flex
+   siblings can't overlap the way stacked absolute layers did. */
+.amount-input-wrap {
+    display: flex; align-items: center; gap: 6px;
+    border: 1.5px solid var(--line-strong); border-radius: 12px; background: var(--surface);
+    padding: 0 14px; transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.amount-input-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.amount-input-wrap .prefix { font-family: "Space Mono", monospace; color: var(--ink-faint); font-size: 14px; flex-shrink: 0; }
+.amount-input-wrap input[type="number"] {
+    border: none; background: transparent; padding: 11px 0; flex: 1; min-width: 0;
+    font-family: "Space Mono", monospace; font-size: 14px; color: var(--ink);
+}
+.amount-input-wrap input[type="number"]:focus { outline: none; }
+.amount-input-wrap input[type="number"]::-webkit-outer-spin-button,
+.amount-input-wrap input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.amount-input-wrap input[type="number"] { -moz-appearance: textfield; }
+
+/* Plain bordered row, not a filled surface-alt box -- the switch's own "on"
+   state is already accent-colored, so a filled box behind it at rest doubled
+   up on the emphasis. It only stands out once it's actually toggled on. */
+.personal-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 16px; }
+.personal-toggle .copy { display: flex; flex-direction: column; gap: 2px; }
+.personal-toggle .copy strong { font-size: 13.5px; color: var(--ink); }
+.personal-toggle .copy span { font-size: 12px; color: var(--ink-soft); }
+
+.switch { position: relative; width: 40px; height: 23px; flex: none; }
+.switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.switch .track { position: absolute; inset: 0; border-radius: 999px; background: var(--line-strong); transition: background 0.15s ease; }
+.switch .thumb { position: absolute; top: 3px; left: 3px; width: 17px; height: 17px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.25); transition: transform 0.15s ease; }
+.switch input:checked ~ .track { background: var(--accent); }
+.switch input:checked ~ .thumb { transform: translateX(17px); }
+
+.field-block { margin-bottom: 22px; }
+.field-block-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+.field-block-head > label { font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+
+/* One toggle, not a select-all/deselect-all pair -- its own label already
+   says the only thing you'd do next, so a second button next to it wouldn't
+   add anything. */
+.split-bulk {
+    all: unset; font-size: 12px; font-weight: 600; color: var(--ink-faint);
+    cursor: pointer; padding: 2px 4px; border-radius: 4px;
+}
+.split-bulk:hover { color: var(--accent); }
+
+/* Chips carrying a mini-avatar need a little more room on the leading edge
+   than base.css's plain text chip-option does. */
+#split-chips.chip-select .chip-option { padding: 7px 13px 7px 8px; gap: 7px; }
+
+/* This whole block -- chips and the bulk toggle both -- goes inert once "keep
+   personal" is on, so there's nothing left to fiddle with once a split no
+   longer applies. */
+#split-field-block.disabled { opacity: 0.4; pointer-events: none; }
+
+.mini-avatar {
+    width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Space Mono", monospace; font-size: 8px; font-weight: 700; color: #fff;
+}
+
+/* Recolored to match the trip-pill in the topbar (accent-soft fill, accent
+   text) instead of the solid accent gradient every other primary button in
+   the app uses -- a deliberate, page-scoped exception. Full width, same call
+   the app already makes for a button ending a form inside a modal: a small,
+   inline-sized button floating alone at the bottom of a wide card looked
+   stranded, even though this isn't technically a modal. */
+.btn-add-expense {
+    width: 100%; justify-content: center; padding: 13px 22px; font-size: 14.5px;
+    background: var(--accent-soft); color: var(--accent); box-shadow: none;
+}
+.btn-add-expense:hover { background: color-mix(in srgb, var(--accent) 22%, var(--accent-soft)); box-shadow: none; }
+
+/* ---- Tabs: the same segmented-control primitive as the budget/energy
+   pickers, repurposed to switch which list is visible. Only one of the two
+   sections is ever shown at once. ---- */
+.tabs { display: flex; gap: 8px; margin-bottom: 6px; }
+.tab {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 11px 0; border-radius: 12px; border: 1.5px solid var(--line-strong);
+    background: var(--surface); color: var(--ink-soft);
+    font-family: "Plus Jakarta Sans", sans-serif; font-weight: 700; font-size: 14px;
+    cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.tab .count {
+    font-family: "Space Mono", monospace; font-weight: 700; font-size: 11.5px;
+    padding: 2px 7px; border-radius: 999px; background: var(--surface-alt); color: var(--ink-faint);
+}
+.tab.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.tab.active .count { background: color-mix(in srgb, var(--accent) 18%, var(--accent-soft)); color: var(--accent); }
+.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tab-sub { color: var(--ink-soft); font-size: 13.5px; margin: 10px 2px 4px; }
+.tab-sub strong { color: var(--ink); font-family: "Space Mono", monospace; font-weight: 700; }
+
+.tab-panel[hidden] { display: none; }
+
+/* ---- Day grouping ---- */
+.day-group { margin-top: 26px; }
+.day-group:first-child { margin-top: 20px; }
+.day-label {
+    font-family: "Space Mono", monospace; font-size: 12px; font-weight: 700;
+    color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.05em;
+    padding-bottom: 8px; margin-bottom: 12px; border-bottom: 1px solid var(--line);
+}
+
+/* ---- Expense rows: the trip-view widget's own .expense-row (dot + name +
+   amount) is the direct ancestor of this card -- same left-dot marker, same
+   mono amount, just given room to also show who paid and how it splits. ---- */
+.expense-list { display: flex; flex-direction: column; gap: 10px; }
+.expense-card { background: var(--surface); border-radius: 16px; box-shadow: var(--shadow); padding: 15px 18px; }
+.expense-top { display: flex; align-items: center; gap: 12px; }
+.expense-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.expense-info { flex: 1; min-width: 0; }
+.expense-desc { font-weight: 600; font-size: 15px; margin: 0 0 2px; }
+.expense-meta { font-size: 12.5px; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.expense-meta .time { font-family: "Space Mono", monospace; color: var(--ink-faint); }
+.expense-amount { font-family: "Space Mono", monospace; font-weight: 700; font-size: 16.5px; white-space: nowrap; }
+
+.split-row {
+    margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.split-stack { display: flex; align-items: center; }
+.split-stack .mini-avatar {
+    width: 22px; height: 22px; font-size: 9px;
+    border: 2px solid var(--surface); margin-left: -7px;
+}
+.split-stack .mini-avatar:first-child { margin-left: 0; }
+.split-label { font-size: 12px; color: var(--ink-soft); margin-left: 8px; }
+.split-shares { font-family: "Space Mono", monospace; font-size: 11.5px; color: var(--ink-faint); }
+.split-shares strong { color: var(--ink-soft); font-weight: 700; }
+
+@media (max-width: 640px) {
+    .add-expense-card .field-row { grid-template-columns: 1fr; }
+    .split-row { flex-direction: column; align-items: flex-start; }
+}

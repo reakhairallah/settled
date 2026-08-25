@@ -9,8 +9,8 @@ include("../../settled-server/auth_check.php");
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Trips — Settled</title>
-<link rel="stylesheet" href="../styles/base.css?v=4">
-<link rel="stylesheet" href="../styles/dashboard.css?v=3">
+<link rel="stylesheet" href="../styles/base.css?v=5">
+<link rel="stylesheet" href="../styles/dashboard.css?v=4">
 </head>
 <body>
 

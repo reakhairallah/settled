@@ -299,6 +299,29 @@ body {
 
 .page-head .sub { color: var(--ink-soft); font-size: 15px; margin: 0; }
 
+/* ---- Stat chips ---- (moved from dashboard.css: expenses.php reuses this
+   now too, so it's a shared component, not a dashboard-only one) */
+.stat-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.stat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 13px 7px 11px;
+    box-shadow: var(--shadow);
+}
+.stat-chip strong { color: var(--ink); font-weight: 700; }
+.stat-chip svg { flex-shrink: 0; }
+.stat-chip.next { color: var(--accent); }
+.stat-chip.next strong { color: var(--accent); }
+.stat-chip.next svg { color: var(--accent); }
+
 /* ---- Shared error text ---- */
 .error-text {
     color: var(--danger);
