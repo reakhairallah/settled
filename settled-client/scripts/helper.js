@@ -41,6 +41,10 @@ function color_for_initials(initials) {
     return VIBE_COLORS[sum % VIBE_COLORS.length];
 }
 
+function format_money(amount) {
+    return '$' + Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 function init_topbar(activePage) {
     document.querySelectorAll('.nav-link').forEach((link) => {
         const isActive = link.dataset.page === activePage;

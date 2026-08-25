@@ -37,10 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return username.slice(0, 2).toUpperCase();
     }
 
-    function format_money(amount) {
-        return '$' + Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
     function copy_with_feedback(button, text) {
         navigator.clipboard.writeText(text).then(() => {
             const originalText = button.textContent;
