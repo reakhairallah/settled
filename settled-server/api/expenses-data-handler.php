@@ -32,7 +32,33 @@ if($trip_member == null) {
 
 $trip_member_id = $trip_member["id"];
 
-$sql = "SELECT DISTINCT expenses.id, expenses.amount, expenses.description, payer_users.username AS payer_username
+$sql = "SELECT name FROM trips WHERE id = ?";
+$query = $mysql->prepare($sql);
+$query->bind_param("i", $trip_id);
+$query->execute();
+$array = $query->get_result();
+$trip = $array->fetch_assoc();
+
+$sql = "SELECT trip_members.id, users.username
+        FROM trip_members
+        INNER JOIN users ON users.id = trip_members.user_id
+        WHERE trip_members.trip_id = ?
+        ORDER BY trip_members.id ASC";
+$query = $mysql->prepare($sql);
+$query->bind_param("i", $trip_id);
+$query->execute();
+$array = $query->get_result();
+
+$members = [];
+while($row = $array->fetch_assoc()) {
+    $member = [];
+    $member["id"] = $row["id"];
+    $member["username"] = $row["username"];
+    $member["initials"] = strtoupper(substr($row["username"], 0, 2));
+    $members[] = $member;
+}
+
+$sql = "SELECT DISTINCT expenses.id, expenses.amount, expenses.description, expenses.created_at, payer_users.username AS payer_username
         FROM expenses
         INNER JOIN trip_members payer_members ON payer_members.id = expenses.payer_trip_member_id
         INNER JOIN users payer_users ON payer_users.id = payer_members.user_id
@@ -50,6 +76,7 @@ while($row = $array->fetch_assoc()) {
     $expense["id"] = $row["id"];
     $expense["amount"] = $row["amount"];
     $expense["description"] = $row["description"];
+    $expense["created_at"] = $row["created_at"];
     $expense["payer_username"] = $row["payer_username"];
 
     $split_sql = "SELECT users.username, expense_splits.share_amount
@@ -75,7 +102,7 @@ while($row = $array->fetch_assoc()) {
     $trip_expenses[] = $expense;
 }
 
-$sql = "SELECT expenses.id, expenses.amount, expenses.description
+$sql = "SELECT expenses.id, expenses.amount, expenses.description, expenses.created_at
         FROM expenses
         LEFT JOIN expense_splits ON expense_splits.expense_id = expenses.id
         WHERE expenses.trip_id = ? AND expenses.payer_trip_member_id = ? AND expense_splits.id IS NULL
@@ -91,10 +118,13 @@ while($row = $array->fetch_assoc()) {
     $expense["id"] = $row["id"];
     $expense["amount"] = $row["amount"];
     $expense["description"] = $row["description"];
+    $expense["created_at"] = $row["created_at"];
     $personal_expenses[] = $expense;
 }
 
 $data = [];
+$data["trip"] = $trip;
+$data["members"] = $members;
 $data["trip_expenses"] = $trip_expenses;
 $data["personal_expenses"] = $personal_expenses;
 echo json_encode(["success" => true, "data" => $data]);
