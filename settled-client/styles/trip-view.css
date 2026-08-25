@@ -6,22 +6,10 @@
     overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
 }
 
-/* ---- Trip name pill in the topbar. Deliberately its own class, not `.nav-link`:
-   init_topbar()'s forEach touches every `.nav-link` and disables clicks on
-   whichever one matches the active page, but this pill is a same-page anchor
-   down to #trip-details, not a link to another page, so it needs to stay a real,
-   clickable link and shouldn't be managed by that logic at all. ---- */
-.trip-pill {
-    display: inline-flex; align-items: center; gap: 7px;
-    font-size: 14px; font-weight: 600; text-decoration: none;
-    color: var(--accent); background: var(--accent-soft);
-    padding: 8px 14px; border-radius: 999px;
-    max-width: 100%; min-width: 0;
-    transition: background 0.15s ease;
-}
-.trip-pill:hover { background: color-mix(in srgb, var(--accent) 22%, var(--accent-soft)); }
-.trip-pill span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.trip-pill:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* .trip-pill's own look now lives in base.css (shared across trip-view,
+   itinerary, and expenses) -- what's left here is page-shape-specific: this
+   page's simpler single-item topbar needs to reset dashboard's busier mobile
+   topbar rules, which base.css's shared media query is actually built for. */
 
 /* base.css's shared topbar has a two-row mobile layout (wordmark alone on its own
    row, forced by a generated `::after` line-break, then the avatar + CTA

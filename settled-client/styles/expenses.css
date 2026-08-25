@@ -1,3 +1,17 @@
+/* ---- Top bar: same shape as trip-view.php's/itinerary.php's (wordmark +
+   trip-pill + avatar, no multi-link nav) so it needs the same mobile reset.
+   base.css's shared topbar mobile rules are built for dashboard's busier
+   topbar and would otherwise leak onto this simpler one. .trip-pill's own
+   look lives in base.css now (shared across all three pages); this reset is
+   still page-specific since it depends on the page's topbar shape. ---- */
+.topbar-nav { min-width: 0; }
+@media (max-width: 640px) {
+    .topbar { flex-wrap: nowrap; row-gap: 0; }
+    .topbar::after { content: none; }
+    .topbar-nav { order: initial; flex-basis: auto; }
+    .topbar-actions { display: flex; }
+}
+
 /* ---- Add-expense card: a real part of the page, not a modal and not a hero.
    This is the thing people actually came here to do, so it sits right under
    the page title with its fields laid out inline. ---- */
@@ -35,7 +49,17 @@
     border: none; background: transparent; padding: 11px 0; flex: 1; min-width: 0;
     font-family: "Space Mono", monospace; font-size: 14px; color: var(--ink);
 }
-.amount-input-wrap input[type="number"]:focus { outline: none; }
+/* base.css's shared .field input:focus-visible rule (border-color + a glow)
+   still matches this input directly, on top of the glow .amount-input-wrap
+   already puts on the whole box on :focus-within -- two overlapping focus
+   rings, one of them only around the digits and visibly excluding the $.
+   Higher specificity than that shared rule so it wins regardless of source
+   order, and turns it off entirely: the wrapper's own focus-within ring is
+   the only one this field needs. */
+.amount-input-wrap input[type="number"]:focus,
+.amount-input-wrap input[type="number"]:focus-visible {
+    outline: none; border: none; box-shadow: none;
+}
 .amount-input-wrap input[type="number"]::-webkit-outer-spin-button,
 .amount-input-wrap input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .amount-input-wrap input[type="number"] { -moz-appearance: textfield; }

@@ -2,10 +2,9 @@
    no multi-link nav) so it needs the same mobile reset. base.css's shared
    topbar mobile rules are built for dashboard's busier topbar (wordmark
    alone on row 1, avatar + CTA buttons on row 2) and would otherwise leak
-   onto this simpler one. See trip-view.css for the original of this block. */
-.trip-pill { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; text-decoration: none; color: var(--accent); background: var(--accent-soft); padding: 8px 14px; border-radius: 999px; max-width: 100%; min-width: 0; transition: background 0.15s ease; }
-.trip-pill:hover { background: color-mix(in srgb, var(--accent) 22%, var(--accent-soft)); }
-.trip-pill span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+   onto this simpler one. .trip-pill's own look now lives in base.css (shared
+   across trip-view, itinerary, and expenses); this reset is still page-
+   specific since it depends on the page's topbar shape, not its content. */
 .topbar-nav { min-width: 0; }
 @media (max-width: 640px) {
     .topbar { flex-wrap: nowrap; row-gap: 0; }
