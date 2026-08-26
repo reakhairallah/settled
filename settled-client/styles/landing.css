@@ -77,37 +77,30 @@
 .mini-feature { display: flex; align-items: center; gap: 12px; padding-top: 14px; margin-top: 14px; border-top: 1px solid var(--line); }
 .mini-feature p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
 
-.why-btn-demo {
-    flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px;
-    font-family: "Plus Jakarta Sans", sans-serif; font-size: 12px; font-weight: 700; color: var(--accent);
-    padding: 6px 12px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 10%, var(--surface-alt));
-}
+/* Every mini-feature demo element below is the REAL shared class, from the
+   real stylesheet (itinerary.css's .vote-btn/.vote-buttons/.why-btn,
+   expenses.css's .switch/.split-stack/.mini-avatar, settle-up.css's
+   .hero-badge/.hero-amount/.mini-ledger-row/.mini-ledger-av/
+   .mini-ledger-amount, all linked in index.html above landing.css) -- never
+   redefined here, so this page can't visually drift from the real app if
+   any of those components change later. This block is layout glue only:
+   sizing/positioning these components correctly inside a compact card row,
+   a context none of them were originally built for.
 
-.mini-vote-demo { display: flex; gap: 6px; flex-shrink: 0; }
-.mini-vote-btn { display: inline-flex; align-items: center; gap: 4px; font-family: "Space Mono", monospace; font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 5px 9px; border: 1.5px solid transparent; }
-.mini-vote-btn.up { color: var(--success); background: color-mix(in srgb, var(--success) 12%, var(--surface)); border-color: color-mix(in srgb, var(--success) 35%, transparent); }
-.mini-vote-btn.down { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, var(--surface)); border-color: color-mix(in srgb, var(--danger) 35%, transparent); }
+   Every demo element is the first child of its .mini-feature row (the
+   caption <p> is always second), so one rule protects all of them from
+   being squeezed by the caption text instead of naming each class. */
+.mini-feature > :first-child { flex-shrink: 0; }
 
-.mini-demo-av { width: 24px; height: 24px; border-radius: 50%; color: #fff; font-family: "Space Mono", monospace; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-.mini-avatar-stack { display: flex; align-items: center; flex-shrink: 0; }
-.mini-avatar-stack .mini-demo-av { border: 2px solid var(--surface); margin-left: -8px; }
-.mini-avatar-stack .mini-demo-av:first-child { margin-left: 0; }
+/* .hero-badge/.hero-amount are sized for settle-up.php's full-page hero;
+   .mini-balance-row scales them down for a card row without touching their
+   own color/shape rules, which stay exactly as the real page defines them. */
+.mini-balance-row { display: flex; align-items: center; gap: 8px; }
+.mini-balance-row .hero-badge { width: 26px; height: 26px; font-size: 15px; }
+.mini-balance-row .hero-amount { font-size: 13px; }
 
-/* Real .switch markup/behavior from expenses.css, shown mid-toggle (checked,
-   purple) since that's the state that actually demonstrates "personal". */
-.mini-switch-demo { position: relative; width: 34px; height: 19px; flex-shrink: 0; display: block; }
-.mini-switch-demo .track { position: absolute; inset: 0; border-radius: 999px; background: var(--accent); }
-.mini-switch-demo .thumb { position: absolute; top: 2.5px; left: 17.5px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.25); }
-
-.mini-balance-demo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.mini-balance-badge { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: "Space Mono", monospace; font-weight: 700; font-size: 15px; }
-.mini-balance-badge.owed { background: color-mix(in srgb, var(--success) 16%, transparent); color: var(--success); }
-.mini-balance-amount { font-family: "Space Mono", monospace; font-weight: 700; font-size: 13px; }
-.mini-balance-amount.owed { color: var(--success); }
-
-.mini-ledger-demo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.mini-ledger-demo-amount { font-family: "Space Mono", monospace; font-weight: 700; font-size: 12px; }
-.mini-ledger-demo-amount.owe { color: var(--danger); }
+/* .mini-ledger-row's own padding/font-size (settle-up.css) are already
+   small enough for a card row as-is -- reused directly with no override. */
 
 /* ---- Closing CTA band ---- */
 .cta-band {
@@ -137,4 +130,19 @@
 @media (max-width: 520px) {
     .hero-actions .btn { flex: 1; justify-content: center; }
     .cta-band { padding: 32px 20px; }
+}
+
+/* itinerary.css/expenses.css/settle-up.css are linked above purely for their
+   real component classes, but each of them also resets .topbar's mobile
+   wrap back to a single row for THEIR OWN simple pill+avatar topbar shape
+   (see each file's own comment on that). CSS cascades globally, not per
+   page, so that reset leaks onto this page's differently-shaped topbar
+   (wordmark + two buttons, no trip-pill) too. This page's topbar is
+   lighter than dashboard's (no avatar circle), so a plain wrap is enough --
+   doesn't need dashboard's `display: contents` dissolve trick, just needs
+   the leaked `nowrap`/`.topbar::after{content:none}` undone. Loaded last so
+   it wins at equal selector specificity regardless of link order above. */
+@media (max-width: 640px) {
+    .topbar { flex-wrap: wrap; row-gap: 10px; }
+    .topbar-spacer { display: none; }
 }
