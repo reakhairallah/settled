@@ -62,11 +62,13 @@ include("../../settled-server/auth_check.php");
         </div>
     </div>
 
-    <div class="section-head" style="margin-top:26px;">
-        <h2>Your payments</h2>
-        <span class="hint" id="your-payments-hint"></span>
+    <div id="your-payments-section">
+        <div class="section-head" style="margin-top:26px;">
+            <h2>Your payments</h2>
+            <span class="hint" id="your-payments-hint"></span>
+        </div>
+        <div class="your-plan-list" id="your-plan-list"></div>
     </div>
-    <div class="your-plan-list" id="your-plan-list"></div>
 
     <details class="disclosure" open>
         <summary>
