@@ -110,7 +110,12 @@
 .mini-balance-row .hero-amount { font-size: 13px; }
 
 /* .mini-ledger-row's own padding/font-size (settle-up.css) are already
-   small enough for a card row as-is -- reused directly with no override. */
+   small enough for a card row as-is. Its 10px gap (built for a row that also
+   has a name between the avatar and amount, settle-up.php's real usage) is
+   too loose now that the name's gone here -- tightened to 3px, scoped to
+   this card's usage only via the .mini-feature ancestor so settle-up.php's
+   own real ledger rows keep their original 10px gap untouched. */
+.mini-feature .mini-ledger-row { gap: 3px; }
 
 /* ---- Closing CTA band ---- */
 .cta-band {
