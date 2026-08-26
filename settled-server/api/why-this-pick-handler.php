@@ -48,7 +48,7 @@ function gemini_request_once($api_key, $prompt) {
 
     $blurb = trim($blurb);
 
-    if(strlen($blurb) > 200) {
+    if(strlen($blurb) > 230) {
         return null;
     }
 
@@ -73,7 +73,6 @@ function call_gemini($api_key, $prompt) {
 
 include("../database/connection.php");
 include("../trip_helpers.php");
-include("../algorithms/matching.php");
 
 if(session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -128,12 +127,36 @@ $query->execute();
 $array = $query->get_result();
 $activity = $array->fetch_assoc();
 
-$trip_data = get_trip_energy_and_interests($mysql, $trip_id);
-$target_energy = $trip_data != null ? $trip_data["target_energy"] : 0;
-$interest_counts = $trip_data != null ? $trip_data["interest_counts"] : [];
-$interest_count = $interest_counts[$activity["category"]] ?? 0;
+$sql = "SELECT trip_members.id, users.username, trip_members.energy_level, trip_members.interests
+        FROM trip_members
+        INNER JOIN users ON users.id = trip_members.user_id
+        WHERE trip_members.trip_id = ?";
+$query = $mysql->prepare($sql);
+$query->bind_param("i", $trip_id);
+$query->execute();
+$array = $query->get_result();
 
-$prompt = "In 1-2 sentences, explain why " . $activity["name"] . " (category: " . $activity["category"] . ", energy level: " . $activity["energy_level"] . "/3) is a good fit for a group with an average energy level of " . $target_energy . " and " . $interest_count . " members interested in " . $activity["category"] . ". Keep it casual and fun, like a friend's recommendation, not a summary of stats. Do not use em dashes or en dashes anywhere in the response, use commas or periods instead. Keep the entire response under 150 characters.";
+$members = [];
+
+while($row = $array->fetch_assoc()) {
+    $interests = $row["interests"] != null ? json_decode($row["interests"]) : [];
+    $interested = in_array($activity["category"], $interests) ? "yes" : "no";
+
+    $member = [];
+    $member["username"] = $row["username"];
+    $member["energy_level"] = $row["energy_level"];
+    $member["interested"] = $interested;
+
+    $members[] = $member;
+}
+
+$member_summary = "";
+
+foreach($members as $member) {
+    $member_summary = $member_summary . $member["username"] . " (energy " . $member["energy_level"] . "/3, interested in " . $activity["category"] . ": " . $member["interested"] . "). ";
+}
+
+$prompt = "In 1-2 sentences, explain why " . $activity["name"] . " (category: " . $activity["category"] . ", energy level: " . $activity["energy_level"] . "/3) fits this particular group of people. Here is each member with their personal energy level from 1 (low key) to 3 (high energy) and whether this activity's category is one of their listed interests: " . $member_summary . "Reason about this specific mix of people, not a group average, and do not quote scores or percentages. If the fit is uneven, be honest about it and say who it suits best or least. Name at most two people by username, never list the whole group. A 'no' only means this category is not among that member's listed interests, which is neutral and never counts against them. Stay warm even when you note a mismatch, it is a friendly heads-up and not a reason to skip an activity the group already chose. Write it casually, like a friend's recommendation. Do not use em dashes or en dashes anywhere in the response, use commas or periods instead. Keep the entire response under 180 characters.";
 
 $fallback_blurb = "This one's a solid match for your group's vibe and energy level.";
 
