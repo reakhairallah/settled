@@ -1,3 +1,11 @@
+// captured synchronously while this script is loading, since document.currentScript
+// is only valid during a plain script's own initial top-level execution. Anchoring
+// to helper.js's own fixed location (rather than the calling page's) is what lets
+// redirect_if_logged_in build a correct API URL regardless of how deep the calling
+// page sits (settled-client/pages/ two levels down, or the site root zero levels
+// down) without needing every caller to pass its own depth in.
+const HELPER_SCRIPT_SRC = document.currentScript ? document.currentScript.src : null;
+
 function repopulate_form_from_query_string(fields) {
     const params = new URLSearchParams(window.location.search);
 
@@ -19,7 +27,11 @@ function extract_axios_error_message(error) {
 }
 
 function redirect_if_logged_in(redirect_url) {
-    axios.get('../../settled-server/api/session-check-handler.php')
+    const session_check_url = HELPER_SCRIPT_SRC
+        ? new URL('../../settled-server/api/session-check-handler.php', HELPER_SCRIPT_SRC).href
+        : '../../settled-server/api/session-check-handler.php';
+
+    axios.get(session_check_url)
         .then((response) => {
             if (response.data.success && response.data.data.logged_in) {
                 window.location.href = redirect_url;
