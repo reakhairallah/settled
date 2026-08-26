@@ -1,0 +1,96 @@
+/* ---- Top bar: same shape as trip-view.php's/itinerary.php's/expenses.php's
+   (wordmark + trip-pill + avatar, no multi-link nav) so it needs the same
+   mobile reset. base.css's shared topbar mobile rules are built for
+   dashboard's busier topbar and would otherwise leak onto this simpler one.
+   .trip-pill's own look lives in base.css (shared across all four pages
+   now); this reset is still page-specific since it depends on the page's
+   topbar shape. ---- */
+.topbar-nav { min-width: 0; }
+@media (max-width: 640px) {
+    .topbar { flex-wrap: nowrap; row-gap: 0; }
+    .topbar::after { content: none; }
+    .topbar-nav { order: initial; flex-basis: auto; }
+    .topbar-actions { display: flex; }
+}
+
+/* ---- Balance hero: the trip-view widget's own balance-callout, grown up
+   into this page's lead element. Background/border switch red or green
+   depending on direction, kept faint (5%) so "you owe" reads as a routine
+   number, not an alarm -- same reasoning as the widget's own callout. ---- */
+.balance-hero { display: flex; align-items: center; gap: 18px; border-radius: 18px; padding: 22px 24px; margin-bottom: 8px; }
+.balance-hero.owed { background: color-mix(in srgb, var(--success) 5%, var(--surface)); border: 1px solid color-mix(in srgb, var(--success) 22%, transparent); }
+.balance-hero.owe { background: color-mix(in srgb, var(--danger) 5%, var(--surface)); border: 1px solid color-mix(in srgb, var(--danger) 22%, transparent); }
+.hero-badge {
+    width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Space Mono", monospace; font-size: 26px; font-weight: 700; line-height: 1;
+}
+.hero-badge.owed { background: color-mix(in srgb, var(--success) 16%, transparent); color: var(--success); }
+.hero-badge.owe { background: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger); }
+.hero-copy { display: flex; flex-direction: column; gap: 2px; }
+.hero-label { font-size: 12.5px; color: var(--ink-soft); }
+.hero-amount { font-family: "Space Mono", monospace; font-weight: 700; font-size: 32px; line-height: 1.1; }
+.hero-amount.owed { color: var(--success); }
+.hero-amount.owe { color: var(--danger); }
+
+/* ---- Your payments: the specific transactions the settle-up algorithm
+   computed that involve you, plain and read-only -- no action, just the
+   fact, same spirit as the widget's own preview rows. No shadow, matching
+   the flat bordered look the rest of this list uses. ---- */
+.your-plan-list { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+.your-plan-row {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 18px;
+}
+.your-plan-av { width: 32px; height: 32px; border-radius: 50%; color: #fff; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: "Space Mono", monospace; font-size: 11px; font-weight: 700; }
+.your-plan-text { flex: 1; font-size: 14px; color: var(--ink-soft); }
+.your-plan-text strong { color: var(--ink); font-weight: 700; }
+.your-plan-amount { font-family: "Space Mono", monospace; font-weight: 700; font-size: 15.5px; }
+.your-plan-amount.in { color: var(--success); }
+.your-plan-amount.out { color: var(--danger); }
+
+/* ---- Disclosure: everyone else's picture, one click away rather than
+   competing with the personal view above for attention. ---- */
+.disclosure { margin-top: 30px; border-top: 1px solid var(--line); padding-top: 18px; }
+.disclosure summary {
+    cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px;
+    font-size: 13.5px; font-weight: 600; color: var(--ink-soft);
+}
+.disclosure summary::-webkit-details-marker { display: none; }
+.disclosure summary svg { transition: transform 0.15s ease; color: var(--ink-faint); }
+.disclosure[open] summary svg { transform: rotate(90deg); }
+.disclosure summary:hover { color: var(--accent); }
+.disclosure-body { margin-top: 16px; display: flex; flex-direction: column; gap: 22px; }
+.disclosure-body h2 { font-size: 14px; }
+
+.mini-ledger { display: flex; flex-direction: column; gap: 6px; }
+.mini-ledger-row { display: flex; align-items: center; gap: 10px; font-size: 13px; padding: 6px 2px; }
+.mini-ledger-av { width: 24px; height: 24px; border-radius: 50%; color: #fff; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: "Space Mono", monospace; font-size: 9px; font-weight: 700; }
+.mini-ledger-name { flex: 1; color: var(--ink-soft); }
+
+/* Sign given its own fixed-width column so every "$" lands in the same
+   place regardless of whether the row is a + or a -, instead of the sign
+   being glued to the front of a variable-width string. */
+.mini-ledger-amount { display: inline-flex; align-items: baseline; font-family: "Space Mono", monospace; font-weight: 700; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.mini-ledger-amount .sign { display: inline-block; width: 11px; text-align: center; }
+.mini-ledger-amount.owed { color: var(--success); }
+.mini-ledger-amount.owe { color: var(--danger); }
+
+.mini-plan-row { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--ink-soft); padding: 5px 2px; }
+.mini-plan-av { width: 22px; height: 22px; border-radius: 50%; color: #fff; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: "Space Mono", monospace; font-size: 8.5px; font-weight: 700; }
+.mini-plan-amount { margin-left: auto; font-family: "Space Mono", monospace; font-weight: 700; font-size: 12px; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* ---- Empty state: no panel, per the app's convention -- shown when the
+   whole trip has nothing left to settle (compute_settle_up returns zero
+   transactions), same wording/icon precedent as the trip-view widget's own
+   "All settled up" state. ---- */
+.settle-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; padding: 60px 20px 40px; }
+.settle-empty-icon { width: 52px; height: 52px; border-radius: 14px; background: color-mix(in srgb, var(--success) 14%, var(--surface-alt)); color: var(--success); display: flex; align-items: center; justify-content: center; }
+.settle-empty h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 19px; margin: 0; }
+.settle-empty p { margin: 0; font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; max-width: 34ch; }
+.settle-empty[hidden] { display: none; }
+
+@media (max-width: 640px) {
+    .page { padding: 20px 18px 60px; }
+}
