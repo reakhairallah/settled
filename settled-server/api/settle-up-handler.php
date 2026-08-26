@@ -31,9 +31,18 @@ if($trip_member == null) {
     exit;
 }
 
+$sql = "SELECT name FROM trips WHERE id = ?";
+$query = $mysql->prepare($sql);
+$query->bind_param("i", $trip_id);
+$query->execute();
+$array = $query->get_result();
+$trip = $array->fetch_assoc();
+
 $settle_up = compute_settle_up($mysql, $trip_id);
 
 $data = [];
+$data["trip"] = $trip;
+$data["your_trip_member_id"] = $trip_member["id"];
 $data["balances"] = $settle_up["balances"];
 $data["transactions"] = $settle_up["transactions"];
 echo json_encode(["success" => true, "data" => $data]);
