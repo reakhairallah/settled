@@ -36,6 +36,11 @@ if($name == "" || $start_date == "" || $end_date == "" || $budget_tier == "") {
     exit;
 }
 
+if(mb_strlen($name) > 100) {
+    echo json_encode(["success" => false, "error" => "Trip name must be 100 characters or less."]);
+    exit;
+}
+
 if(!in_array($budget_tier, ["1", "2", "3"])) {
     echo json_encode(["success" => false, "error" => "Budget tier must be 1, 2, or 3."]);
     exit;

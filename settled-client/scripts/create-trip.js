@@ -71,6 +71,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (nameInput.value.trim().length > 100) {
+            tripError.textContent = 'Trip name must be 100 characters or less.';
+            return;
+        }
+
         const formData = new FormData(tripForm);
 
         axios.post('../../settled-server/api/create-trip-handler.php', formData)

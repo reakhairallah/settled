@@ -98,7 +98,7 @@ include("../../settled-server/auth_check.php");
 
                 <div class="field">
                     <label for="name">Trip name</label>
-                    <input type="text" id="name" name="name" placeholder="Lisbon Long Weekend" required>
+                    <input type="text" id="name" name="name" placeholder="Lisbon Long Weekend" maxlength="100" required>
                 </div>
 
                 <div class="field-row">
@@ -198,7 +198,7 @@ include("../../settled-server/auth_check.php");
 
                 <div class="field invite-field">
                     <label for="invite_code">Invite code</label>
-                    <input type="text" id="invite_code" name="invite_code" class="invite-input" placeholder="LISBON4" required>
+                    <input type="text" id="invite_code" name="invite_code" class="invite-input" placeholder="LISBON4" maxlength="12" required>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Find trip</button>

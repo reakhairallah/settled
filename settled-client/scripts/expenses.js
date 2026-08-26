@@ -179,12 +179,22 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const description = descriptionInput.value.trim();
+        if (description === '') {
+            addExpenseError.textContent = 'Please enter a description.';
+            return;
+        }
+        if (description.length > 255) {
+            addExpenseError.textContent = 'Description must be 255 characters or less.';
+            return;
+        }
+
         addExpenseButton.disabled = true;
 
         const formData = new FormData();
         formData.append('trip_id', tripId);
         formData.append('amount', amount);
-        formData.append('description', descriptionInput.value.trim());
+        formData.append('description', description);
 
         if (!personalSwitch.checked) {
             checkboxes().forEach((cb) => {

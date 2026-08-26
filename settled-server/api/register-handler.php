@@ -27,6 +27,10 @@ if($username == "" || $email == "" || $password == "" || $confirm_password == ""
     back_to_form("All fields are required.", $username, $email);
 }
 
+if(mb_strlen($username) > 50){
+    back_to_form("Username must be 50 characters or less.", $username, $email);
+}
+
 if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
     back_to_form("Please enter a valid email address.", $username, $email);
 }

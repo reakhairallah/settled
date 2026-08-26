@@ -70,7 +70,7 @@ include("../../settled-server/auth_check.php");
             </div>
             <div class="field">
                 <label for="description">Description</label>
-                <input type="text" id="description" name="description" placeholder="e.g. Dinner at Time Out Market">
+                <input type="text" id="description" name="description" placeholder="e.g. Dinner at Time Out Market" maxlength="255" required>
             </div>
         </div>
 

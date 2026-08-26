@@ -43,7 +43,16 @@ if($amount_raw == "" || !is_numeric($amount_raw) || (float)$amount_raw <= 0) {
 $amount = round((float)$amount_raw, 2);
 
 $description = trim($_POST["description"] ?? "");
-$description = $description == "" ? null : $description;
+
+if($description == "") {
+    echo json_encode(["success" => false, "error" => "Please enter a description."]);
+    exit;
+}
+
+if(mb_strlen($description) > 255) {
+    echo json_encode(["success" => false, "error" => "Description must be 255 characters or less."]);
+    exit;
+}
 
 $submitted_ids = $_POST["member_ids"] ?? [];
 if(!is_array($submitted_ids)) {
