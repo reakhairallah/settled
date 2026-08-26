@@ -318,6 +318,12 @@ body {
 
 .page-head .sub { color: var(--ink-soft); font-size: 15px; margin: 0; }
 
+/* ---- Section heading ---- (moved from trip-view.css: settle-up.php reuses
+   this now too, so it's a shared component, not a trip-view-only one) */
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
+.section-head h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 18px; margin: 0; }
+.section-head .sub { font-size: 13px; color: var(--ink-soft); margin: 0; }
+
 /* ---- Stat chips ---- (moved from dashboard.css: expenses.php reuses this
    now too, so it's a shared component, not a dashboard-only one) */
 .stat-chips { display: flex; gap: 8px; flex-wrap: wrap; }

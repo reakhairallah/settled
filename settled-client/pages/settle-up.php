@@ -9,8 +9,8 @@ include("../../settled-server/auth_check.php");
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Settle Up — Settled</title>
-<link rel="stylesheet" href="../styles/base.css?v=6">
-<link rel="stylesheet" href="../styles/settle-up.css?v=1">
+<link rel="stylesheet" href="../styles/base.css?v=7">
+<link rel="stylesheet" href="../styles/settle-up.css?v=2">
 </head>
 <body>
 
@@ -65,7 +65,7 @@ include("../../settled-server/auth_check.php");
     <div id="your-payments-section">
         <div class="section-head" style="margin-top:26px;">
             <h2>Your payments</h2>
-            <span class="hint" id="your-payments-hint"></span>
+            <span class="sub" id="your-payments-hint"></span>
         </div>
         <div class="your-plan-list" id="your-plan-list"></div>
     </div>
