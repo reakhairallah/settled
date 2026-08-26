@@ -115,9 +115,12 @@
     background: color-mix(in srgb, var(--danger) 3%, var(--surface));
     border: 1px solid color-mix(in srgb, var(--danger) 20%, transparent);
 }
+/* Plain +/- text now, not the trending-line icon -- same call settle-up.php's
+   own hero badge already made. */
 .balance-direction {
     width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
+    font-family: "Space Mono", monospace; font-weight: 700; font-size: 17px; line-height: 1;
 }
 .balance-direction.owed { background: color-mix(in srgb, var(--success) 16%, transparent); color: var(--success); }
 .balance-direction.owe { background: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger); }
@@ -175,16 +178,29 @@
 
 .pass-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: auto; }
 
-/* shared tier meter: budget here, energy per member in the manifest below, so
-   both "how much" facts read the same way instead of one being text, one a bar */
+/* shared tier meter: budget here (a .budget-pill now, see base.css), energy
+   per member in the manifest below (a .battery now), so both "how much"
+   facts still read the same way -- a small mono caption next to a filled
+   indicator, just no longer the same pip shape for both. */
 .tier-meter { display: inline-flex; align-items: center; gap: 8px; }
 .tier-caption {
     font-family: "Space Mono", monospace; font-size: 10px; font-weight: 700;
     letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint);
 }
-.tier-pips { display: flex; gap: 3px; }
-.tier-pip { width: 14px; height: 6px; border-radius: 3px; background: var(--line); }
-.tier-pip.filled { background: var(--ink-soft); }
+
+/* .budget-pill's fill/empty span colors and the always-3-signs behavior now
+   live in base.css, shared with itinerary's activity cost tags -- no
+   trip-view-specific override needed here anymore. */
+
+/* Energy's meter, redrawn as a real battery (body + terminal nub) instead of
+   three plain pips -- same 3-way split (1/2/3 of 3 filled), same "filled =
+   --ink-soft, not --accent" rule as everything else on this ticket, just a
+   shape that reads "how much is left" at a glance instead of three
+   same-looking dots. */
+.battery { display: flex; align-items: center; gap: 2px; width: 24px; height: 12px; padding: 2px; box-sizing: border-box; border: 1.5px solid var(--line-strong); border-radius: 3px; position: relative; }
+.battery-nub { position: absolute; top: 50%; right: -4px; transform: translateY(-50%); width: 3px; height: 6px; background: var(--line-strong); border-radius: 0 2px 2px 0; }
+.battery-cell { flex: 1; height: 100%; border-radius: 1px; background: var(--line); }
+.battery-cell.filled { background: var(--ink-soft); }
 
 /* the die-cut perforation between the two coupons: a real 2px content-box column
    (not a zero-width border trick) so the notches land exactly on-center */

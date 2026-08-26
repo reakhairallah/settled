@@ -124,11 +124,8 @@
 .slot-time { font-family: "Space Mono", monospace; font-size: 11px; color: var(--ink-faint); }
 .tag { font-size: 11.5px; font-weight: 600; color: var(--ink-soft); background: var(--surface-alt); border-radius: 999px; padding: 4px 10px; }
 
-/* budget pill: plain $ / $$ / $$$. Same pill radius as the category tag
-   next to it (999px, one family of pills), but outlined/mono instead of
-   filled, so budget and category still read as two different kinds of fact
-   sitting side by side, not two identical chips. */
-.budget-pill { display: inline-flex; font-family: "Space Mono", monospace; font-weight: 700; font-size: 11px; color: var(--ink-faint); background: transparent; border: 1px solid var(--line-strong); border-radius: 999px; padding: 3px 8px; }
+/* .budget-pill's own look now lives in base.css -- trip-view.php reuses it
+   for the boarding pass now too, replacing the old tier-meter there. */
 
 .card-foot { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
 .card-foot.foot-end { justify-content: flex-end; }
@@ -184,14 +181,15 @@
    panel is actually there to sit under it (:has(~ .why-blurb.loaded)), the
    blurb stays collapsed while the fetch is in flight, so during that window
    the button has nothing to connect to and stays a plain pill. The shine,
-   below, plays for the whole open state either way, since it's the loading
-   cue itself, not something waiting on content to make sense. */
+   below, is scoped the same way -- it's the loading cue, so it stops the
+   moment the blurb is actually loaded instead of continuing to play behind
+   text the user is now trying to read. */
 .why-toggle:checked:has(~ .why-blurb.loaded) ~ .card-foot .why-btn { border-radius: 12px 12px 0 0; }
-.why-toggle:checked ~ .card-foot .why-btn::after {
+.why-toggle:checked:not(:has(~ .why-blurb.loaded)) ~ .card-foot .why-btn::after {
     content: ""; position: absolute; inset: 0; pointer-events: none;
     background: linear-gradient(110deg, transparent 35%, color-mix(in srgb, var(--accent) 22%, transparent) 50%, transparent 65%);
     background-size: 220% 100%;
-    animation: shine 4.5s ease-in-out infinite;
+    animation: shine 3.5s ease-in-out infinite;
 }
 @keyframes shine { 0% { background-position: 200% 0; } 100% { background-position: -60% 0; } }
 .why-toggle:focus-visible ~ .card-foot .why-btn { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -247,9 +245,6 @@
    list's filter chips and match badges room to breathe. */
 .modal-panel { width: 500px; }
 .assign-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
-.assign-search { width: 100%; font-family: "Plus Jakarta Sans", sans-serif; font-size: 14px; color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 14px; margin: 16px 0 12px; }
-.assign-search:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.assign-search::placeholder { color: var(--ink-faint); }
 
 .assign-filters { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 12px; }
 /* display:inline-flex, not the default inline, matters here: inset:0 on the

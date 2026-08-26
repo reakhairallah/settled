@@ -9,7 +9,7 @@ include("../../settled-server/auth_check.php");
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Trips — Settled</title>
-<link rel="stylesheet" href="../styles/base.css?v=7">
+<link rel="stylesheet" href="../styles/base.css?v=10">
 <link rel="stylesheet" href="../styles/dashboard.css?v=4">
 </head>
 <body>
@@ -268,7 +268,7 @@ include("../../settled-server/auth_check.php");
 </dialog>
 
 <script src="../scripts/axios.min.js"></script>
-<script src="../scripts/helper.js?v=6"></script>
+<script src="../scripts/helper.js?v=7"></script>
 <script src="../scripts/dashboard.js?v=2"></script>
 <script src="../scripts/create-trip.js"></script>
 <script src="../scripts/join.js"></script>

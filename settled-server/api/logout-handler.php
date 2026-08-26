@@ -10,7 +10,7 @@ if(ini_get("session.use_cookies")) {
     setcookie(session_name(), "", time() - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
 }
 
-header("Location: ../../settled-client/pages/login.html");
+header("Location: ../../settled-client/pages/index.html");
 exit;
 
 ?>

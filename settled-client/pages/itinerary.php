@@ -9,8 +9,8 @@ include("../../settled-server/auth_check.php");
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Itinerary — Settled</title>
-<link rel="stylesheet" href="../styles/base.css?v=7">
-<link rel="stylesheet" href="../styles/itinerary.css?v=1">
+<link rel="stylesheet" href="../styles/base.css?v=10">
+<link rel="stylesheet" href="../styles/itinerary.css?v=4">
 </head>
 <body>
 
@@ -74,7 +74,6 @@ include("../../settled-server/auth_check.php");
             <div class="assign-head">
                 <h1 id="assign-modal-heading">Assign an activity</h1>
             </div>
-            <input class="assign-search" type="text" id="assign-search-input" placeholder="Search activities…">
             <div class="assign-filters" id="assign-filters"></div>
             <div class="assign-list-wrap">
                 <div class="assign-list" id="assign-list"></div>
@@ -89,7 +88,7 @@ include("../../settled-server/auth_check.php");
 </dialog>
 
 <script src="../scripts/axios.min.js"></script>
-<script src="../scripts/helper.js?v=6"></script>
-<script src="../scripts/itinerary.js?v=1"></script>
+<script src="../scripts/helper.js?v=7"></script>
+<script src="../scripts/itinerary.js?v=3"></script>
 </body>
 </html>

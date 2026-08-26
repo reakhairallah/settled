@@ -9,8 +9,8 @@ include("../../settled-server/auth_check.php");
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Settle Up — Settled</title>
-<link rel="stylesheet" href="../styles/base.css?v=7">
-<link rel="stylesheet" href="../styles/settle-up.css?v=2">
+<link rel="stylesheet" href="../styles/base.css?v=10">
+<link rel="stylesheet" href="../styles/settle-up.css?v=4">
 </head>
 <body>
 
@@ -95,7 +95,7 @@ include("../../settled-server/auth_check.php");
 </div>
 
 <script src="../scripts/axios.min.js"></script>
-<script src="../scripts/helper.js?v=6"></script>
+<script src="../scripts/helper.js?v=7"></script>
 <script src="../scripts/settle-up.js"></script>
 </body>
 </html>

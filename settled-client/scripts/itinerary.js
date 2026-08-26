@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const assignModalContent = document.getElementById('assign-modal-content');
     const assignForm = document.getElementById('assign-form');
-    const assignSearchInput = document.getElementById('assign-search-input');
     const assignFilters = document.getElementById('assign-filters');
     const assignList = document.getElementById('assign-list');
     const assignError = document.getElementById('assign-error');
@@ -362,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const category = el('span', 'tag');
         category.textContent = slot.activity.category;
         const budget = el('span', 'budget-pill');
-        budget.textContent = '$'.repeat(slot.activity.cost_tier);
+        fill_budget_pill(budget, slot.activity.cost_tier);
         tagRow.append(time, category, budget);
 
         const foot = el('div', 'card-foot' + (slot.status === 'proposed' ? '' : ' foot-end'));
@@ -511,12 +510,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---- Assign-activity modal ----
 
-    assignSearchInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-        }
-    });
-
     assignCancelBtn.addEventListener('click', close_modal);
 
     // wired once, here, rather than inside render_assign_candidates (which
@@ -527,21 +520,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function apply_assign_filters() {
         const activeInput = assignFilters.querySelector('input:checked');
         const activeCategory = activeInput ? activeInput.value : '';
-        const search = assignSearchInput.value.trim().toLowerCase();
 
         assignList.querySelectorAll('.assign-option').forEach((option) => {
-            const matchesCategory = activeCategory === '' || option.dataset.category === activeCategory;
-            const matchesSearch = option.dataset.name.includes(search);
-            option.hidden = !(matchesCategory && matchesSearch);
+            option.hidden = activeCategory !== '' && option.dataset.category !== activeCategory;
         });
     }
     assignFilters.addEventListener('change', apply_assign_filters);
-    assignSearchInput.addEventListener('input', apply_assign_filters);
 
     function open_assign_modal(slot, triggerEl) {
         currentAssignSlotId = slot.id;
         assignError.textContent = '';
-        assignSearchInput.value = '';
         assignFilters.textContent = '';
         assignList.textContent = '';
 
@@ -613,7 +601,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const option = document.createElement('label');
         option.className = 'assign-option';
         option.dataset.category = candidate.category;
-        option.dataset.name = candidate.name.toLowerCase();
 
         const input = document.createElement('input');
         input.type = 'radio';
@@ -636,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const category = el('span', 'tag');
         category.textContent = candidate.category;
         const budget = el('span', 'budget-pill');
-        budget.textContent = '$'.repeat(candidate.cost_tier);
+        fill_budget_pill(budget, candidate.cost_tier);
         tags.append(category, budget);
 
         main.append(nameRow, tags);

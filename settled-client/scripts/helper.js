@@ -57,6 +57,19 @@ function format_money(amount) {
     return '$' + Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+// fills a .budget-pill element with 3 individual $ spans, filled up to
+// tier -- shared so itinerary's activity cost tags and trip-view's own
+// budget pill can never visually drift apart from each other again
+function fill_budget_pill(pillElement, tier) {
+    pillElement.textContent = '';
+    for (let i = 1; i <= 3; i++) {
+        const sign = document.createElement('span');
+        sign.className = i <= tier ? 'filled' : '';
+        sign.textContent = '$';
+        pillElement.appendChild(sign);
+    }
+}
+
 function get_initials(username) {
     const parts = username.trim().split(/\s+/);
     if (parts.length > 1) {

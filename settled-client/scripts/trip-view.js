@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const passTitle = document.getElementById('pass-title');
     const passDeparts = document.getElementById('pass-departs');
     const passReturns = document.getElementById('pass-returns');
-    const budgetPips = document.getElementById('budget-pips');
+    const budgetPill = document.getElementById('budget-pill');
     const inviteCodeValue = document.getElementById('invite-code-value');
     const manifestEyebrow = document.getElementById('manifest-eyebrow');
     const manifestContainer = document.getElementById('manifest-container');
@@ -86,26 +86,27 @@ document.addEventListener('DOMContentLoaded', () => {
         passDeparts.textContent = start.month + ' ' + start.day;
         passReturns.textContent = end.month + ' ' + end.day + ', ' + end.year;
 
-        budgetPips.innerHTML = '';
-        for (let i = 1; i <= 3; i++) {
-            const pip = document.createElement('div');
-            pip.className = 'tier-pip' + (i <= trip.budget_tier ? ' filled' : '');
-            budgetPips.appendChild(pip);
-        }
+        fill_budget_pill(budgetPill, trip.budget_tier);
 
         inviteCodeValue.textContent = trip.invite_code;
         currentInviteCode = trip.invite_code;
     }
 
-    function build_tier_pips(value) {
-        const wrap = document.createElement('div');
-        wrap.className = 'tier-pips';
+    // a battery, not pips -- the 3-way split is the same idea (1/2/3 of 3
+    // filled) but drawn as a real battery shape (body + terminal nub) so the
+    // "how much is left" reading is immediate, not just three same-shaped dots
+    function build_battery(value) {
+        const battery = document.createElement('div');
+        battery.className = 'battery';
         for (let i = 1; i <= 3; i++) {
-            const pip = document.createElement('div');
-            pip.className = 'tier-pip' + (i <= value ? ' filled' : '');
-            wrap.appendChild(pip);
+            const cell = document.createElement('div');
+            cell.className = 'battery-cell' + (i <= value ? ' filled' : '');
+            battery.appendChild(cell);
         }
-        return wrap;
+        const nub = document.createElement('div');
+        nub.className = 'battery-nub';
+        battery.appendChild(nub);
+        return battery;
     }
 
     function render_manifest(members, yourTripMemberId) {
@@ -147,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
             energyCaption.className = 'tier-caption';
             energyCaption.textContent = 'Energy';
             energyMeter.appendChild(energyCaption);
-            energyMeter.appendChild(build_tier_pips(member.energy_level));
+            energyMeter.appendChild(build_battery(member.energy_level));
             nameRow.appendChild(energyMeter);
 
             info.appendChild(nameRow);
@@ -316,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const directionBadge = document.createElement('div');
         directionBadge.className = 'balance-direction ' + direction;
-        directionBadge.appendChild(build_trend_icon(direction));
+        directionBadge.textContent = direction === 'owed' ? '+' : '−';
         callout.appendChild(directionBadge);
 
         const text = document.createElement('div');
@@ -373,25 +374,6 @@ document.addEventListener('DOMContentLoaded', () => {
             list.appendChild(row);
         });
         settleWidgetBody.appendChild(list);
-    }
-
-    const TREND_ICON = {
-        owed: '<path d="M3 17l6-6 4 4 7-8"/><path d="M15 6h5v5"/>',
-        owe: '<path d="M3 7l6 6 4-4 7 8"/><path d="M15 18h5v-5"/>'
-    };
-
-    function build_trend_icon(direction) {
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('width', '16');
-        svg.setAttribute('height', '16');
-        svg.setAttribute('viewBox', '0 0 24 24');
-        svg.setAttribute('fill', 'none');
-        svg.setAttribute('stroke', 'currentColor');
-        svg.setAttribute('stroke-width', '2.2');
-        svg.setAttribute('stroke-linecap', 'round');
-        svg.setAttribute('stroke-linejoin', 'round');
-        svg.innerHTML = TREND_ICON[direction];
-        return svg;
     }
 
     function build_svg_arrow() {

@@ -347,6 +347,22 @@ body {
 .stat-chip.next strong { color: var(--accent); }
 .stat-chip.next svg { color: var(--accent); }
 
+/* ---- Budget pill ---- (moved from itinerary.css: trip-view.php reuses this
+   now too, replacing the old tier-meter on the boarding pass.) Always shows
+   all 3 $ signs (filled via .fill_budget_pill() in helper.js, not a plain
+   '$'.repeat(tier) string), same "how much is left" reading everywhere it
+   appears -- trip-view's own budget pill and itinerary's activity cost tags
+   both build through that one shared function so they can't drift apart.
+   line-height was unset originally, so the pill inherited body's ~1.5
+   line-height on top of its own padding -- taller than the padding alone
+   suggested; set to 1 so padding is the only thing controlling height. */
+.budget-pill { display: inline-flex; align-items: center; font-family: "Space Mono", monospace; font-weight: 700; font-size: 14px; line-height: 1; background: transparent; border: 1px solid var(--line-strong); border-radius: 999px; padding: 3px 7px; }
+/* filled/empty match the energy battery's own fill/empty colors exactly
+   (.battery-cell.filled / .battery-cell, trip-view.css) so budget and energy
+   read as the same underlying idea even though one's text and one's a shape. */
+.budget-pill span { color: var(--line); }
+.budget-pill span.filled { color: var(--ink-soft); }
+
 /* ---- Shared error text ---- */
 .error-text {
     color: var(--danger);
