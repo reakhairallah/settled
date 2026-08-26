@@ -29,14 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
     expensesWidgetLink.href = 'expenses.php?id=' + tripId;
     settleWidgetLink.href = 'settle-up.php?id=' + tripId;
 
-    function get_initials(username) {
-        const parts = username.trim().split(/\s+/);
-        if (parts.length > 1) {
-            return (parts[0][0] + parts[1][0]).toUpperCase();
-        }
-        return username.slice(0, 2).toUpperCase();
-    }
-
     function copy_with_feedback(button, text) {
         navigator.clipboard.writeText(text).then(() => {
             const originalText = button.textContent;

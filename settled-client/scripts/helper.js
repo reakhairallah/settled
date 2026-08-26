@@ -45,6 +45,14 @@ function format_money(amount) {
     return '$' + Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+function get_initials(username) {
+    const parts = username.trim().split(/\s+/);
+    if (parts.length > 1) {
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return username.slice(0, 2).toUpperCase();
+}
+
 function init_topbar(activePage) {
     document.querySelectorAll('.nav-link').forEach((link) => {
         const isActive = link.dataset.page === activePage;
