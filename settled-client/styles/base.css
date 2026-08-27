@@ -328,6 +328,7 @@ body {
    now too, so it's a shared component, not a dashboard-only one) */
 .stat-chips { display: flex; gap: 8px; flex-wrap: wrap; }
 
+.stat-chip[hidden] { display: none; }
 .stat-chip {
     display: inline-flex;
     align-items: center;

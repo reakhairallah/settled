@@ -9,7 +9,7 @@ include("../../settled-server/auth_check.php");
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Expenses — Settled</title>
-<link rel="stylesheet" href="../styles/base.css?v=10">
+<link rel="stylesheet" href="../styles/base.css?v=11">
 <link rel="stylesheet" href="../styles/expenses.css?v=2">
 </head>
 <body>
