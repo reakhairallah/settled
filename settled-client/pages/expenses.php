@@ -108,7 +108,7 @@ include("../../settled-server/auth_check.php");
         Trip expenses <span class="count" id="trip-count">0</span>
     </button>
     <button type="button" class="tab" data-tab="personal" id="tab-personal">
-        My personal <span class="count" id="personal-count">0</span>
+        Personal expenses <span class="count" id="personal-count">0</span>
     </button>
 </div>
 <p class="tab-sub" id="tab-sub"></p>

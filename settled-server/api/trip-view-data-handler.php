@@ -96,13 +96,16 @@ $itinerary_summary["total_slots"] = $total_slots;
 $itinerary_summary["locked_slots"] = $locked_slots;
 $itinerary_summary["preview_slots"] = $preview_slots;
 
-$sql = "SELECT COALESCE(SUM(amount), 0) AS total, COUNT(*) AS total_count FROM expenses WHERE trip_id = ?";
+$sql = "SELECT COALESCE(SUM(amount), 0) AS total, COUNT(*) AS total_count FROM expenses
+        WHERE trip_id = ? AND EXISTS (SELECT 1 FROM expense_splits WHERE expense_splits.expense_id = expenses.id)";
 $query = $mysql->prepare($sql);
 $query->bind_param("i", $trip_id);
 $query->execute();
 $row = $query->get_result()->fetch_assoc();
 
-$sql = "SELECT description, amount FROM expenses WHERE trip_id = ? ORDER BY created_at DESC, id DESC LIMIT 3";
+$sql = "SELECT description, amount FROM expenses
+        WHERE trip_id = ? AND EXISTS (SELECT 1 FROM expense_splits WHERE expense_splits.expense_id = expenses.id)
+        ORDER BY created_at DESC, id DESC LIMIT 3";
 $query = $mysql->prepare($sql);
 $query->bind_param("i", $trip_id);
 $query->execute();
