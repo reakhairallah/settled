@@ -10,7 +10,7 @@ include("../../settled-server/auth_check.php");
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Trip — Settled</title>
 <link rel="stylesheet" href="../styles/base.css?v=10">
-<link rel="stylesheet" href="../styles/trip-view.css?v=11">
+<link rel="stylesheet" href="../styles/trip-view.css?v=13">
 </head>
 <body>
 
@@ -151,6 +151,6 @@ include("../../settled-server/auth_check.php");
 
 <script src="../scripts/axios.min.js"></script>
 <script src="../scripts/helper.js?v=7"></script>
-<script src="../scripts/trip-view.js?v=8"></script>
+<script src="../scripts/trip-view.js?v=10"></script>
 </body>
 </html>

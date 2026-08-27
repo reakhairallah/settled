@@ -310,26 +310,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const balance = Number(summary.my_balance);
-        const direction = balance >= 0 ? 'owed' : 'owe';
+        // you personally have nothing pending, but the group isn't fully
+        // settled -- same "You're all settled up" wording settle-up.php's hero
+        // uses for this case, rather than a misleading "You're owed $0.00"
+        const settled = Math.round(balance * 100) === 0;
+        const direction = settled ? 'settled' : (balance > 0 ? 'owed' : 'owe');
 
         const callout = document.createElement('div');
         callout.className = 'balance-callout ' + direction;
 
         const directionBadge = document.createElement('div');
         directionBadge.className = 'balance-direction ' + direction;
-        directionBadge.textContent = direction === 'owed' ? '+' : '−';
+        if (settled) {
+            const check = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            check.setAttribute('width', '15');
+            check.setAttribute('height', '15');
+            check.setAttribute('viewBox', '0 0 24 24');
+            check.setAttribute('fill', 'none');
+            check.setAttribute('stroke', 'currentColor');
+            check.setAttribute('stroke-width', '2.6');
+            check.setAttribute('stroke-linecap', 'round');
+            check.setAttribute('stroke-linejoin', 'round');
+            check.innerHTML = '<path d="M20 6 9 17l-5-5"/>';
+            directionBadge.appendChild(check);
+        } else {
+            directionBadge.textContent = direction === 'owed' ? '+' : '−';
+        }
         callout.appendChild(directionBadge);
 
         const text = document.createElement('div');
         text.className = 'balance-callout-text';
         const label = document.createElement('span');
         label.className = 'balance-callout-label';
-        label.textContent = direction === 'owed' ? "You're owed" : 'You owe';
-        const amount = document.createElement('span');
-        amount.className = 'balance-callout-amount ' + direction;
-        amount.textContent = format_money(Math.abs(balance));
+        label.textContent = settled ? "You're all settled up" : (direction === 'owed' ? "You're owed" : 'You owe');
         text.appendChild(label);
-        text.appendChild(amount);
+        if (!settled) {
+            const amount = document.createElement('span');
+            amount.className = 'balance-callout-amount ' + direction;
+            amount.textContent = format_money(Math.abs(balance));
+            text.appendChild(amount);
+        }
         callout.appendChild(text);
 
         settleWidgetBody.appendChild(callout);

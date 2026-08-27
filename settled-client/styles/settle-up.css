@@ -45,9 +45,10 @@
 .hero-amount[hidden] { display: none; }
 
 /* "You personally have nothing pending, but the group isn't fully settled" --
-   quiet, neutral, no direction to signal since there isn't one. A checkmark
-   instead of the +/- text used for owed/owe, since neither sign applies. */
-.balance-hero.settled { background: var(--surface-alt); border: 1px solid var(--line); }
+   carries the same background and border as the "owed" hero (you're in the
+   black, just at zero), with a checkmark instead of the +/- text since neither
+   sign applies. */
+.balance-hero.settled { background: color-mix(in srgb, var(--success) 5%, var(--surface)); border: 1px solid color-mix(in srgb, var(--success) 22%, transparent); }
 .hero-badge.settled { background: color-mix(in srgb, var(--success) 14%, transparent); color: var(--success); }
 
 /* ---- Your payments: the specific transactions the settle-up algorithm

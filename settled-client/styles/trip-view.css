@@ -115,6 +115,12 @@
     background: color-mix(in srgb, var(--danger) 3%, var(--surface));
     border: 1px solid color-mix(in srgb, var(--danger) 20%, transparent);
 }
+/* you're square but the group isn't -- same treatment as "owed" (you're in
+   the black, just at zero), matching settle-up.php's own settled hero */
+.balance-callout.settled {
+    background: color-mix(in srgb, var(--success) 3%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--success) 20%, transparent);
+}
 /* Plain +/- text now, not the trending-line icon -- same call settle-up.php's
    own hero badge already made. */
 .balance-direction {
@@ -124,6 +130,7 @@
 }
 .balance-direction.owed { background: color-mix(in srgb, var(--success) 16%, transparent); color: var(--success); }
 .balance-direction.owe { background: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger); }
+.balance-direction.settled { background: color-mix(in srgb, var(--success) 14%, transparent); color: var(--success); }
 .balance-callout-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .balance-callout-label { font-size: 11px; color: var(--ink-soft); }
 .balance-callout-amount { font-family: "Space Mono", monospace; font-weight: 700; font-size: 20px; }
