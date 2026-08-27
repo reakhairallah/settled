@@ -42,11 +42,11 @@ foreach($trips as &$trip) {
     $query->execute();
     $array = $query->get_result();
 
-    $member_initials = [];
+    $member_usernames = [];
     while($row = $array->fetch_assoc()) {
-        $member_initials[] = strtoupper(substr($row["username"], 0, 2));
+        $member_usernames[] = $row["username"];
     }
-    $trip["member_initials"] = $member_initials;
+    $trip["member_usernames"] = $member_usernames;
 }
 unset($trip);
 

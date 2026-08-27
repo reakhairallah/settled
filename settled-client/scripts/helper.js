@@ -98,8 +98,9 @@ function init_topbar(activePage) {
         .then((response) => {
             if (response.data.success) {
                 const info = response.data.data;
-                profileAvatar.textContent = info.initials;
-                profileAvatar.style.background = color_for_initials(info.initials);
+                const initials = get_initials(info.username);
+                profileAvatar.textContent = initials;
+                profileAvatar.style.background = color_for_initials(initials);
                 profileUsername.textContent = info.username;
                 profileEmail.textContent = info.email;
             }

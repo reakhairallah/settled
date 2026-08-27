@@ -54,7 +54,6 @@ while($row = $array->fetch_assoc()) {
     $member = [];
     $member["id"] = $row["id"];
     $member["username"] = $row["username"];
-    $member["initials"] = strtoupper(substr($row["username"], 0, 2));
     $members[] = $member;
 }
 

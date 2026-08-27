@@ -150,7 +150,7 @@ include("../../settled-server/auth_check.php");
 </div>
 
 <script src="../scripts/axios.min.js"></script>
-<script src="../scripts/helper.js?v=7"></script>
+<script src="../scripts/helper.js?v=8"></script>
 <script src="../scripts/trip-view.js?v=10"></script>
 </body>
 </html>

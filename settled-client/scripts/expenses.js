@@ -112,9 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
             input.checked = true;
             input.addEventListener('change', update_bulk_label);
 
+            const initials = get_initials(member.username);
             const avatar = el('span', 'mini-avatar');
-            avatar.style.background = color_for_initials(member.initials);
-            avatar.textContent = member.initials;
+            avatar.style.background = color_for_initials(initials);
+            avatar.textContent = initials;
 
             const name = document.createElement('span');
             name.textContent = member.username;
@@ -384,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const stack = el('div', 'split-stack');
         splits.forEach((split) => {
             const avatar = el('span', 'mini-avatar');
-            const initials = split.username.slice(0, 2).toUpperCase();
+            const initials = get_initials(split.username);
             avatar.style.background = color_for_initials(initials);
             avatar.textContent = initials;
             stack.appendChild(avatar);

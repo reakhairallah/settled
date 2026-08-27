@@ -88,7 +88,7 @@ include("../../settled-server/auth_check.php");
 </dialog>
 
 <script src="../scripts/axios.min.js"></script>
-<script src="../scripts/helper.js?v=7"></script>
+<script src="../scripts/helper.js?v=8"></script>
 <script src="../scripts/itinerary.js?v=3"></script>
 </body>
 </html>

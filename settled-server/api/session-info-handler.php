@@ -26,7 +26,6 @@ $row = $array->fetch_assoc();
 $data = [];
 $data["username"] = $row["username"];
 $data["email"] = $row["email"];
-$data["initials"] = strtoupper(substr($row["username"], 0, 2));
 echo json_encode(["success" => true, "data" => $data]);
 
 ?>

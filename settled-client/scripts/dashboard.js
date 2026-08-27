@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const body = document.createElement('div');
         body.className = 'trip-card-body';
         body.appendChild(build_dates_row(trip.start_date, trip.end_date));
-        body.appendChild(build_meta_row(trip.member_initials, trip.member_count));
+        body.appendChild(build_meta_row(trip.member_usernames, trip.member_count));
         card.appendChild(body);
 
         const seam = document.createElement('div');
@@ -147,15 +147,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return wrap;
     }
 
-    function build_meta_row(memberInitials, memberCount) {
+    function build_meta_row(memberUsernames, memberCount) {
         const metaRow = document.createElement('div');
         metaRow.className = 'trip-meta-row';
 
         const stack = document.createElement('div');
         stack.className = 'avatar-stack';
 
-        const shown = memberInitials.slice(0, 4);
-        shown.forEach((initials) => {
+        const shown = memberUsernames.slice(0, 4);
+        shown.forEach((username) => {
+            const initials = get_initials(username);
             const av = document.createElement('div');
             av.className = 'av';
             av.style.background = color_for_initials(initials);
@@ -163,10 +164,10 @@ document.addEventListener('DOMContentLoaded', () => {
             stack.appendChild(av);
         });
 
-        if (memberInitials.length > 4) {
+        if (memberUsernames.length > 4) {
             const more = document.createElement('div');
             more.className = 'av av-more';
-            more.textContent = '+' + (memberInitials.length - 4);
+            more.textContent = '+' + (memberUsernames.length - 4);
             stack.appendChild(more);
         }
         metaRow.appendChild(stack);
